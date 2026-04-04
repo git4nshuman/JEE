@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JEE Command — Anshuman</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080810;
+  --s1:#0f0f1a;
+  --s2:#14141f;
+  --s3:#1c1c2e;
+  --border:#ffffff0f;
+  --border2:#ffffff1a;
+  --border3:#ffffff2a;
+  --accent:#7c5cfc;
+  --accent-dim:#7c5cfc33;
+  --rose:#fc5c7d;
+  --rose-dim:#fc5c7d22;
+  --mint:#3de8a0;
+  --mint-dim:#3de8a022;
+  --amber:#f5a623;
+  --amber-dim:#f5a62322;
+  --text:#eeeaff;
+  --muted:#6b6890;
+  --muted2:#9994b8;
+  --radius:12px;
+  --radius-sm:8px;
+}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  font-family:'Syne',sans-serif;
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* NOISE OVERLAY */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:.4;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px}
+
+/* LAYOUT */
+.app{display:flex;min-height:100vh;position:relative;z-index:1}
+
+/* SIDEBAR */
+.sidebar{
+  width:220px;min-height:100vh;background:var(--s1);
+  border-right:0.5px solid var(--border2);
+  display:flex;flex-direction:column;
+  position:sticky;top:0;height:100vh;overflow:hidden;
+  flex-shrink:0;
+}
+.sidebar-logo{padding:28px 20px 20px;border-bottom:0.5px solid var(--border)}
+.logo-text{font-size:18px;font-weight:800;letter-spacing:2px;color:var(--accent)}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px}
+.sidebar-countdown{padding:16px 20px;border-bottom:0.5px solid var(--border)}
+.cd-label{font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px}
+.cd-value{font-size:28px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;line-height:1}
+.cd-unit{font-size:10px;color:var(--muted);margin-top:2px}
+.cd-date{font-size:10px;color:var(--muted2);margin-top:6px;font-family:'JetBrains Mono',monospace}
+.sidebar-nav{padding:12px 10px;flex:1}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-radius:var(--radius-sm);cursor:pointer;
+  color:var(--muted2);font-size:13px;font-weight:500;
+  transition:all .2s;margin-bottom:2px;
+  border:0.5px solid transparent;
+}
+.nav-item:hover{color:var(--text);background:var(--s2)}
+.nav-item.active{color:var(--text);background:var(--accent-dim);border-color:var(--accent)33}
+.nav-icon{font-size:15px;width:18px;text-align:center}
+.sidebar-footer{padding:16px 20px;border-top:0.5px solid var(--border)}
+.today-chip{
+  background:var(--s3);border:0.5px solid var(--border2);
+  border-radius:var(--radius-sm);padding:8px 10px;
+  font-size:10px;color:var(--muted2);font-family:'JetBrains Mono',monospace;
+  line-height:1.6;
+}
+
+/* MAIN */
+.main{flex:1;padding:32px;overflow-x:hidden}
+.page{display:none}
+.page.active{display:block}
+.page-title{font-size:22px;font-weight:800;margin-bottom:4px}
+.page-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+
+/* CARDS */
+.card{
+  background:var(--s1);border:0.5px solid var(--border2);
+  border-radius:var(--radius);padding:20px;
+}
+.card-title{font-size:11px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:14px;font-weight:500}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-card{
+  background:var(--s2);border:0.5px solid var(--border2);
+  border-radius:var(--radius);padding:16px;
+}
+.stat-label{font-size:10px;color:var(--muted);letter-spacing:.5px;margin-bottom:6px}
+.stat-value{font-size:24px;font-weight:800;color:var(--text);font-family:'JetBrains Mono',monospace;line-height:1}
+.stat-sub{font-size:10px;color:var(--muted);margin-top:4px}
+.stat-accent{color:var(--accent)}
+.stat-rose{color:var(--rose)}
+.stat-mint{color:var(--mint)}
+.stat-amber{color:var(--amber)}
+
+/* GRID LAYOUTS */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.mb16{margin-bottom:16px}
+
+/* SUBJECT BARS */
+.subj-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.subj-name{font-size:12px;min-width:90px;color:var(--text);font-weight:500}
+.bar-track{flex:1;height:5px;background:var(--s3);border-radius:10px;overflow:hidden}
+.bar-fill{height:100%;border-radius:10px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.bar-pct{font-size:11px;font-family:'JetBrains Mono',monospace;min-width:34px;text-align:right;color:var(--muted2)}
+
+/* YEAR CALENDAR */
+.year-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
+.month-block{background:var(--s2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:14px}
+.month-name{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--muted2);margin-bottom:10px;text-transform:uppercase}
+.month-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.day-cell{
+  width:100%;aspect-ratio:1;border-radius:3px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-family:'JetBrains Mono',monospace;
+  color:var(--muted);background:var(--s3);cursor:pointer;
+  transition:transform .1s;border:0.5px solid transparent;
+}
+.day-cell:hover{transform:scale(1.2);border-color:var(--border3)}
+.day-cell.studied{background:var(--mint);color:#000;font-weight:500}
+.day-cell.today{border-color:var(--accent);color:var(--accent)}
+.day-cell.today.studied{background:var(--accent);color:#fff;border-color:var(--accent)}
+.day-cell.empty{background:transparent;cursor:default}
+.day-cell.empty:hover{transform:none}
+.day-cell.future{opacity:.3;cursor:default}
+.day-cell.future:hover{transform:none}
+.weekday-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px}
+.wd{font-size:7px;color:var(--muted);text-align:center;font-family:'JetBrains Mono',monospace}
+
+/* LOG SESSION */
+.slider-wrap{margin-bottom:16px}
+.slider-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.slider-name{font-size:13px;color:var(--text);font-weight:500}
+.slider-val{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:4px}
+input[type=range]{
+  width:100%;height:4px;-webkit-appearance:none;
+  background:var(--s3);border-radius:10px;outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:16px;height:16px;
+  border-radius:50%;background:var(--accent);cursor:pointer;
+  box-shadow:0 0 0 3px var(--accent-dim);transition:box-shadow .2s;
+}
+input[type=range]::-webkit-slider-thumb:hover{box-shadow:0 0 0 6px var(--accent-dim)}
+.session-total{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;background:var(--s3);border-radius:var(--radius-sm);
+  margin-top:16px;border:0.5px solid var(--border2);
+}
+.total-label{font-size:12px;color:var(--muted)}
+.total-val{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--mint)}
+.log-btn{
+  background:var(--accent);color:#fff;border:none;
+  padding:10px 24px;border-radius:var(--radius-sm);
+  font-size:13px;font-family:'Syne',sans-serif;font-weight:600;
+  cursor:pointer;transition:all .2s;letter-spacing:.5px;margin-top:12px;
+  width:100%;
+}
+.log-btn:hover{opacity:.85;transform:translateY(-1px)}
+.log-btn:active{transform:scale(.98)}
+
+/* SESSION LIST */
+.session-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 0;border-bottom:0.5px solid var(--border);
+}
+.session-item:last-child{border-bottom:none}
+.sess-date{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;min-width:70px}
+.sess-pills{display:flex;gap:6px;flex:1}
+.pill{font-size:10px;padding:2px 8px;border-radius:10px;font-family:'JetBrains Mono',monospace}
+.pill-phy{background:var(--accent-dim);color:var(--accent)}
+.pill-che{background:var(--rose-dim);color:var(--rose)}
+.pill-mat{background:var(--mint-dim);color:var(--mint)}
+.sess-total{font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text)}
+
+/* TOPICS */
+.subject-section{margin-bottom:20px}
+.subject-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.subject-title{font-size:14px;font-weight:700}
+.subject-prog{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted)}
+.topics-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+.topic-item{
+  display:flex;align-items:center;gap:8px;
+  background:var(--s2);border:0.5px solid var(--border2);
+  border-radius:var(--radius-sm);padding:8px 10px;cursor:pointer;
+  transition:all .2s;
+}
+.topic-item:hover{border-color:var(--border3);background:var(--s3)}
+.topic-item.done{background:var(--mint-dim);border-color:var(--mint)33}
+.topic-check{
+  width:16px;height:16px;border-radius:3px;
+  border:1.5px solid var(--border3);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;
+}
+.topic-item.done .topic-check{background:var(--mint);border-color:var(--mint)}
+.topic-name{font-size:11px;color:var(--text);line-height:1.3}
+.topic-item.done .topic-name{color:var(--mint)}
+
+/* MOCK TESTS */
+.score-entry{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
+.score-inp{
+  background:var(--s3);border:0.5px solid var(--border2);
+  border-radius:var(--radius-sm);padding:8px 12px;
+  color:var(--text);font-family:'Syne',sans-serif;font-size:13px;
+  width:100px;outline:none;transition:border-color .2s;
+}
+.score-inp:focus{border-color:var(--accent)}
+.add-btn{
+  background:var(--mint);color:#000;border:none;
+  padding:8px 20px;border-radius:var(--radius-sm);
+  font-size:12px;font-family:'Syne',sans-serif;font-weight:700;
+  cursor:pointer;transition:all .2s;
+}
+.add-btn:hover{opacity:.85}
+.mock-item{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 0;border-bottom:0.5px solid var(--border);
+}
+.mock-num{font-size:10px;color:var(--muted);min-width:24px;font-family:'JetBrains Mono',monospace}
+.mock-score-val{
+  font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;
+  min-width:60px;
+}
+.mock-bar-track{flex:1;height:3px;background:var(--s3);border-radius:10px;overflow:hidden}
+.mock-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--rose))}
+.mock-label-text{font-size:10px;color:var(--muted);min-width:60px;text-align:right}
+.mock-delete{font-size:12px;color:var(--muted);cursor:pointer;padding:2px 6px;border-radius:4px;transition:all .2s}
+.mock-delete:hover{color:var(--rose);background:var(--rose-dim)}
+
+/* QUOTE STRIP */
+.quote-strip{
+  background:linear-gradient(135deg,var(--s2),var(--s1));
+  border:0.5px solid var(--accent)33;border-radius:var(--radius);
+  padding:14px 18px;margin-bottom:20px;
+  font-size:13px;color:var(--muted2);font-style:italic;line-height:1.6;
+  border-left:2px solid var(--accent);
+}
+
+/* BADGE */
+.badge{
+  display:inline-block;font-size:9px;padding:2px 7px;
+  border-radius:10px;font-weight:600;letter-spacing:.5px;
+  font-family:'JetBrains Mono',monospace;
+}
+.badge-acc{background:var(--accent-dim);color:var(--accent)}
+.badge-rose{background:var(--rose-dim);color:var(--rose)}
+.badge-mint{background:var(--mint-dim);color:var(--mint)}
+.badge-amber{background:var(--amber-dim);color:var(--amber)}
+
+/* PROGRESS BAR TOP */
+.prog-strip{
+  height:2px;background:var(--s3);border-radius:2px;
+  margin-top:8px;overflow:hidden;
+}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--mint));border-radius:2px;transition:width .8s}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.page.active{animation:fadeUp .3s ease}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.live-dot{width:6px;height:6px;background:var(--mint);border-radius:50%;display:inline-block;animation:pulse 2s infinite;margin-right:6px}
+
+/* MOBILE */
+@media(max-width:768px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;min-height:auto;height:auto;position:relative;flex-direction:row;flex-wrap:wrap}
+  .sidebar-countdown{display:none}
+  .sidebar-footer{display:none}
+  .sidebar-logo{padding:14px 16px;border-bottom:none;border-right:0.5px solid var(--border)}
+  .sidebar-nav{display:flex;padding:8px;gap:4px;overflow-x:auto}
+  .nav-item{padding:8px 12px;white-space:nowrap;margin-bottom:0}
+  .main{padding:16px}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .year-grid{grid-template-columns:1fr 1fr}
+  .grid2{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+  .year-grid{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">JEE⚡CMD</div>
+    <div class="logo-sub">ANSHUMAN · MNNIT TARGET</div>
+  </div>
+  <div class="sidebar-countdown">
+    <div class="cd-label">DAYS TO JEE MAINS</div>
+    <div class="cd-value" id="days-count">—</div>
+    <div class="cd-unit">Jan 2027 attempt</div>
+    <div class="prog-strip"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="cd-date" id="today-str"></div>
+  </div>
+  <nav class="sidebar-nav" id="sidebar-nav">
+    <div class="nav-item active" onclick="goTo('overview')"><span class="nav-icon">⚡</span>Overview</div>
+    <div class="nav-item" onclick="goTo('log')"><span class="nav-icon">📝</span>Log Session</div>
+    <div class="nav-item" onclick="goTo('calendar')"><span class="nav-icon">📅</span>Year Calendar</div>
+    <div class="nav-item" onclick="goTo('syllabus')"><span class="nav-icon">📚</span>Syllabus</div>
+    <div class="nav-item" onclick="goTo('mocks')"><span class="nav-icon">📊</span>Mock Tests</div>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="today-chip" id="today-chip"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- OVERVIEW -->
+  <div class="page active" id="page-overview">
+    <div class="page-title">Command Center</div>
+    <div class="page-sub" id="ov-sub">Loading your stats...</div>
+    <div class="quote-strip" id="quote-box"></div>
+    <div class="stat-grid">
+      <div class="stat-card"><div class="stat-label">TODAY</div><div class="stat-value stat-accent" id="ov-today">0h</div><div class="stat-sub">study time</div></div>
+      <div class="stat-card"><div class="stat-label">THIS WEEK</div><div class="stat-value stat-mint" id="ov-week">0h</div><div class="stat-sub">of 35h goal</div></div>
+      <div class="stat-card"><div class="stat-label">STREAK</div><div class="stat-value stat-amber" id="ov-streak">0</div><div class="stat-sub">days 🔥</div></div>
+      <div class="stat-card"><div class="stat-label">BEST MOCK</div><div class="stat-value stat-rose" id="ov-best">—</div><div class="stat-sub">out of 300</div></div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title">Subject Split (all time)</div>
+        <div class="subj-row">
+          <div class="subj-name">Physics</div>
+          <div class="bar-track"><div class="bar-fill" id="bar-phy" style="background:var(--accent);width:0%"></div></div>
+          <div class="bar-pct" id="pct-phy">0%</div>
+        </div>
+        <div class="subj-row">
+          <div class="subj-name">Chemistry</div>
+          <div class="bar-track"><div class="bar-fill" id="bar-che" style="background:var(--rose);width:0%"></div></div>
+          <div class="bar-pct" id="pct-che">0%</div>
+        </div>
+        <div class="subj-row">
+          <div class="subj-name">Maths</div>
+          <div class="bar-track"><div class="bar-fill" id="bar-mat" style="background:var(--mint);width:0%"></div></div>
+          <div class="bar-pct" id="pct-mat">0%</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Syllabus Progress</div>
+        <div class="subj-row">
+          <div class="subj-name">Physics</div>
+          <div class="bar-track"><div class="bar-fill" id="syl-phy" style="background:var(--accent);width:0%"></div></div>
+          <div class="bar-pct" id="sylp-phy">0%</div>
+        </div>
+        <div class="subj-row">
+          <div class="subj-name">Chemistry</div>
+          <div class="bar-track"><div class="bar-fill" id="syl-che" style="background:var(--rose);width:0%"></div></div>
+          <div class="bar-pct" id="sylp-che">0%</div>
+        </div>
+        <div class="subj-row">
+          <div class="subj-name">Maths</div>
+          <div class="bar-track"><div class="bar-fill" id="syl-mat" style="background:var(--mint);width:0%"></div></div>
+          <div class="bar-pct" id="sylp-mat">0%</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="live-dot"></span>Recent Sessions</div>
+      <div id="recent-list"><div style="color:var(--muted);font-size:12px">No sessions yet. Go log one.</div></div>
+    </div>
+  </div>
+
+  <!-- LOG SESSION -->
+  <div class="page" id="page-log">
+    <div class="page-title">Log Session</div>
+    <div class="page-sub" id="log-date-sub"></div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title">Today's Hours</div>
+        <div class="slider-wrap">
+          <div class="slider-label"><span class="slider-name">⚡ Physics</span><span class="slider-val" id="vl-phy">0.0h</span></div>
+          <input type="range" min="0" max="6" step="0.5" value="0" id="sl-phy" oninput="updSlider('phy')">
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-label"><span class="slider-name">🧪 Chemistry</span><span class="slider-val" id="vl-che">0.0h</span></div>
+          <input type="range" min="0" max="6" step="0.5" value="0" id="sl-che" oninput="updSlider('che')">
+        </div>
+        <div class="slider-wrap">
+          <div class="slider-label"><span class="slider-name">∑ Maths</span><span class="slider-val" id="vl-mat">0.0h</span></div>
+          <input type="range" min="0" max="6" step="0.5" value="0" id="sl-mat" oninput="updSlider('mat')">
+        </div>
+        <div class="session-total">
+          <span class="total-label">Session Total</span>
+          <span class="total-val" id="total-today">0.0h</span>
+        </div>
+        <button class="log-btn" onclick="logSession()">Save Session ✓</button>
+      </div>
+      <div class="card">
+        <div class="card-title">Session History</div>
+        <div id="sessions-list"><div style="color:var(--muted);font-size:12px">Nothing logged yet.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- YEAR CALENDAR -->
+  <div class="page" id="page-calendar">
+    <div class="page-title">Year Calendar</div>
+    <div class="page-sub">Every green cell is a win. Fill the year.</div>
+    <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap">
+      <span class="badge badge-mint">■ Studied</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)"><span style="width:12px;height:12px;background:var(--accent);border-radius:2px;display:inline-block"></span>Today</span>
+      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)"><span style="width:12px;height:12px;background:var(--s3);border-radius:2px;display:inline-block"></span>Not studied</span>
+      <span class="badge badge-acc" id="total-days-studied">0 days studied</span>
+    </div>
+    <div class="year-grid" id="year-calendar"></div>
+  </div>
+
+  <!-- SYLLABUS -->
+  <div class="page" id="page-syllabus">
+    <div class="page-title">Syllabus Tracker</div>
+    <div class="page-sub">Tick topics as you finish them. No mercy till all green.</div>
+    <div id="syllabus-content"></div>
+  </div>
+
+  <!-- MOCK TESTS -->
+  <div class="page" id="page-mocks">
+    <div class="page-title">Mock Tests</div>
+    <div class="page-sub">Track every attempt. Watch the line go up.</div>
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="stat-card"><div class="stat-label">TOTAL MOCKS</div><div class="stat-value stat-accent" id="mk-count">0</div></div>
+      <div class="stat-card"><div class="stat-label">AVERAGE</div><div class="stat-value stat-amber" id="mk-avg">—</div><div class="stat-sub">/300</div></div>
+      <div class="stat-card"><div class="stat-label">BEST</div><div class="stat-value stat-mint" id="mk-best">—</div><div class="stat-sub">/300</div></div>
+    </div>
+    <div class="card mb16">
+      <div class="card-title">Score Trend</div>
+      <div style="position:relative;width:100%;height:220px"><canvas id="mock-chart"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">All Attempts</div>
+      <div id="mock-list"><div style="color:var(--muted);font-size:12px">No mocks logged yet.</div></div>
+      <div class="score-entry">
+        <input class="score-inp" type="number" id="new-score" placeholder="Score (0-300)" min="0" max="300">
+        <input class="score-inp" style="width:130px" type="text" id="new-label" placeholder="Label (e.g. PW #3)">
+        <button class="add-btn" onclick="addMock()">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /app -->
+
+<script>
+// ─── STORAGE ───────────────────────────────
+const K=k=>JSON.parse(localStorage.getItem('jee2027_'+k)||'null');
+const W=(k,v)=>localStorage.setItem('jee2027_'+k,JSON.stringify(v));
+
+// ─── DATA ──────────────────────────────────
+const TOPICS={
+  phy:['Kinematics','Laws of Motion','Work & Energy','Rotational Motion','Gravitation','Fluid Mechanics','Thermal Properties','Thermodynamics','Kinetic Theory','Oscillations','Waves','Electrostatics','Current Electricity','Moving Charges','Magnetism','EMI & AC','EM Waves','Ray Optics','Wave Optics','Dual Nature','Atoms & Nuclei','Semiconductors','Communication Systems'],
+  che:['Basic Concepts','Structure of Atom','Periodic Table','Chemical Bonding','States of Matter','Thermodynamics','Equilibrium','Redox Reactions','Hydrogen','s-Block','p-Block (11)','Organics Basics','Hydrocarbons','Environmental Chem','Solid State','Solutions','Electrochemistry','Chemical Kinetics','Surface Chem','p-Block (12)','d & f Block','Coordination','Haloarenes','Alcohols & Ethers','Aldehydes & Ketones','Carboxylic Acids','Amines','Biomolecules','Polymers','Everyday Chemistry'],
+  mat:['Sets & Relations','Complex Numbers','Sequences & Series','Quadratic Equations','Permutations','Binomial Theorem','Matrices','Determinants','Limits','Continuity','Derivatives','Applications of Derivatives','Integrals','Definite Integrals','Differential Equations','Straight Lines','Circles','Conic Sections','Vectors','3D Geometry','Linear Programming','Probability','Statistics','Trigonometry','Inverse Trig','Mathematical Reasoning']
+};
+
+const QUOTES=[
+  "MNNIT Allahabad CSE. EWS seat. Your name on it.",
+  "The grind you put in today is the gap you close tomorrow.",
+  "Every hour logged here is one step closer to NIT.",
+  "Consistency beats motivation every single time.",
+  "Your father built discipline over decades. You have one year. Use it.",
+  "The seat exists. The question is whether you want it badly enough.",
+  "Aizen played the long game. So do you.",
+  "January 2027 is coming whether you study or not.",
+  "Elite performance is just accumulated ordinary days.",
+  "You cleared compartment in 4 days flat. You already know what you're capable of."
+];
+
+// ─── NAVIGATION ────────────────────────────
+function goTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  const navItems=document.querySelectorAll('.nav-item');
+  const pages=['overview','log','calendar','syllabus','mocks'];
+  navItems[pages.indexOf(page)]?.classList.add('active');
+  if(page==='overview')renderOverview();
+  if(page==='log')renderSessions();
+  if(page==='calendar')renderCalendar();
+  if(page==='syllabus')renderSyllabus();
+  if(page==='mocks'){renderMockList();setTimeout(renderMockChart,80);}
+}
+
+// ─── DATE HELPERS ──────────────────────────
+function dateKey(d){
+  d=d||new Date();
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function fmtDate(d){
+  return d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
+}
+function fmtShort(d){
+  return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+}
+
+// ─── INIT ──────────────────────────────────
+function init(){
+  const now=new Date();
+  const jee=new Date('2027-01-15');
+  const start=new Date('2026-04-01');
+  const total=Math.ceil((jee-start)/(864e5));
+  const elapsed=Math.ceil((now-start)/(864e5));
+  const days=Math.ceil((jee-now)/(864e5));
+  document.getElementById('days-count').textContent=Math.max(0,days);
+  document.getElementById('prog-fill').style.width=Math.min(100,Math.round(elapsed/total*100))+'%';
+  document.getElementById('today-str').textContent=fmtDate(now);
+  document.getElementById('log-date-sub').textContent='Logging for '+fmtDate(now);
+  document.getElementById('ov-sub').textContent=fmtDate(now);
+  document.getElementById('today-chip').innerHTML=fmtDate(now)+'<br><span style="color:var(--accent)">'+(Math.max(0,days))+' days left</span>';
+  document.getElementById('quote-box').textContent=QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  renderOverview();
+  renderSessions();
+  renderSyllabus();
+  renderCalendar();
+  renderMockList();
+}
+
+// ─── SLIDERS ───────────────────────────────
+function updSlider(s){
+  const v=parseFloat(document.getElementById('sl-'+s).value);
+  document.getElementById('vl-'+s).textContent=v.toFixed(1)+'h';
+  const t=parseFloat(document.getElementById('sl-phy').value)+parseFloat(document.getElementById('sl-che').value)+parseFloat(document.getElementById('sl-mat').value);
+  document.getElementById('total-today').textContent=t.toFixed(1)+'h';
+}
+
+// ─── LOG SESSION ───────────────────────────
+function logSession(){
+  const phy=parseFloat(document.getElementById('sl-phy').value);
+  const che=parseFloat(document.getElementById('sl-che').value);
+  const mat=parseFloat(document.getElementById('sl-mat').value);
+  if(phy+che+mat===0){alert('Log at least some hours!');return;}
+  const sessions=K('sessions')||[];
+  const key=dateKey();
+  const existing=sessions.findIndex(s=>s.key===key);
+  if(existing>-1){
+    sessions[existing].phy+=phy;sessions[existing].che+=che;sessions[existing].mat+=mat;
+    sessions[existing].total=+(sessions[existing].phy+sessions[existing].che+sessions[existing].mat).toFixed(1);
+  } else {
+    sessions.unshift({key,date:fmtShort(new Date()),phy,che,mat,total:+(phy+che+mat).toFixed(1)});
+  }
+  W('sessions',sessions);
+  ['phy','che','mat'].forEach(s=>{document.getElementById('sl-'+s).value=0;updSlider(s);});
+  renderSessions();
+  renderOverview();
+}
+
+// ─── SESSIONS LIST ─────────────────────────
+function renderSessions(){
+  const sessions=K('sessions')||[];
+  const el=document.getElementById('sessions-list');
+  if(!sessions.length){el.innerHTML='<div style="color:var(--muted);font-size:12px">Nothing logged yet.</div>';return;}
+  el.innerHTML=sessions.slice(0,12).map(s=>`
+    <div class="session-item">
+      <div class="sess-date">${s.date}</div>
+      <div class="sess-pills">
+        <span class="pill pill-phy">P:${s.phy}h</span>
+        <span class="pill pill-che">C:${s.che}h</span>
+        <span class="pill pill-mat">M:${s.mat}h</span>
+      </div>
+      <div class="sess-total">${s.total}h</div>
+    </div>`).join('');
+}
+
+// ─── OVERVIEW ──────────────────────────────
+function renderOverview(){
+  const sessions=K('sessions')||[];
+  const todayKey=dateKey();
+  const todayS=sessions.filter(s=>s.key===todayKey);
+  const todayH=todayS.reduce((a,s)=>a+s.total,0);
+  document.getElementById('ov-today').textContent=todayH.toFixed(1)+'h';
+
+  const now=new Date();
+  const weekStart=new Date(now);weekStart.setDate(now.getDate()-now.getDay());
+  const weekKeys=[];
+  for(let i=0;i<7;i++){const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);weekKeys.push(dateKey(d));}
+  const weekH=sessions.filter(s=>weekKeys.includes(s.key)).reduce((a,s)=>a+s.total,0);
+  document.getElementById('ov-week').textContent=weekH.toFixed(1)+'h';
+
+  const uniqueDays=new Set(sessions.map(s=>s.key)).size;
+  let streak=0;
+  const allKeys=[...new Set(sessions.map(s=>s.key))].sort().reverse();
+  for(let i=0;i<allKeys.length;i++){
+    const d=new Date(allKeys[i]);const prev=new Date();prev.setDate(prev.getDate()-i);
+    if(dateKey(d)===dateKey(prev))streak++;else break;
+  }
+  document.getElementById('ov-streak').textContent=streak;
+
+  const totalPhy=sessions.reduce((a,s)=>a+s.phy,0);
+  const totalChe=sessions.reduce((a,s)=>a+s.che,0);
+  const totalMat=sessions.reduce((a,s)=>a+s.mat,0);
+  const tot=totalPhy+totalChe+totalMat||1;
+  const pp=Math.round(totalPhy/tot*100),cp=Math.round(totalChe/tot*100),mp=Math.round(totalMat/tot*100);
+  document.getElementById('bar-phy').style.width=pp+'%';document.getElementById('pct-phy').textContent=pp+'%';
+  document.getElementById('bar-che').style.width=cp+'%';document.getElementById('pct-che').textContent=cp+'%';
+  document.getElementById('bar-mat').style.width=mp+'%';document.getElementById('pct-mat').textContent=mp+'%';
+
+  ['phy','che','mat'].forEach(s=>{
+    const done=(K('topics_'+s)||[]).length;
+    const total=TOPICS[s].length;
+    const pct=Math.round(done/total*100);
+    document.getElementById('syl-'+s).style.width=pct+'%';
+    document.getElementById('sylp-'+s).textContent=pct+'%';
+  });
+
+  const mocks=K('mocks')||[];
+  const best=mocks.length?Math.max(...mocks.map(m=>m.score)):'—';
+  document.getElementById('ov-best').textContent=best!=='—'?best:'—';
+
+  const recentEl=document.getElementById('recent-list');
+  if(!sessions.length){recentEl.innerHTML='<div style="color:var(--muted);font-size:12px">No sessions yet. Go log one.</div>';return;}
+  recentEl.innerHTML=sessions.slice(0,5).map(s=>`
+    <div class="session-item">
+      <div class="sess-date">${s.date}</div>
+      <div class="sess-pills">
+        <span class="pill pill-phy">P:${s.phy}h</span>
+        <span class="pill pill-che">C:${s.che}h</span>
+        <span class="pill pill-mat">M:${s.mat}h</span>
+      </div>
+      <div class="sess-total">${s.total}h</div>
+    </div>`).join('');
+}
+
+// ─── YEAR CALENDAR ─────────────────────────
+function renderCalendar(){
+  const sessions=K('sessions')||[];
+  const studiedKeys=new Set(sessions.map(s=>s.key));
+  const todayKey=dateKey();
+  const now=new Date();
+  const startYear=2026;
+
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const weekdays=['S','M','T','W','T','F','S'];
+
+  let html='';
+  for(let m=0;m<12;m++){
+    const firstDay=new Date(startYear,m,1);
+    const daysInMonth=new Date(startYear,m+1,0).getDate();
+    const startDow=firstDay.getDay();
+    html+=`<div class="month-block">
+      <div class="month-name">${months[m]} ${startYear}</div>
+      <div class="weekday-labels">${weekdays.map(w=>`<div class="wd">${w}</div>`).join('')}</div>
+      <div class="month-days">`;
+    for(let e=0;e<startDow;e++) html+=`<div class="day-cell empty"></div>`;
+    for(let d=1;d<=daysInMonth;d++){
+      const cellDate=new Date(startYear,m,d);
+      const key=dateKey(cellDate);
+      const isToday=key===todayKey;
+      const studied=studiedKeys.has(key);
+      const isFuture=cellDate>now&&!isToday;
+      let cls='day-cell';
+      if(studied)cls+=' studied';
+      if(isToday)cls+=' today';
+      if(isFuture)cls+=' future';
+      html+=`<div class="${cls}" title="${key}${studied?' ✓':''}">${d}</div>`;
+    }
+    html+=`</div></div>`;
+  }
+  document.getElementById('year-calendar').innerHTML=html;
+  document.getElementById('total-days-studied').textContent=studiedKeys.size+' days studied';
+}
+
+// ─── SYLLABUS ──────────────────────────────
+function renderSyllabus(){
+  const subjects=[
+    {key:'phy',name:'Physics',color:'var(--accent)'},
+    {key:'che',name:'Chemistry',color:'var(--rose)'},
+    {key:'mat',name:'Mathematics',color:'var(--mint)'}
+  ];
+  let html='';
+  subjects.forEach(sub=>{
+    const done=K('topics_'+sub.key)||[];
+    const pct=Math.round(done.length/TOPICS[sub.key].length*100);
+    html+=`<div class="subject-section card mb16">
+      <div class="subject-header">
+        <div class="subject-title" style="color:${sub.color}">${sub.name}</div>
+        <div class="subject-prog">${done.length}/${TOPICS[sub.key].length} topics · ${pct}%</div>
+      </div>
+      <div class="prog-strip" style="margin-bottom:14px"><div class="prog-fill" style="width:${pct}%;background:${sub.color}"></div></div>
+      <div class="topics-wrap">`;
+    TOPICS[sub.key].forEach((t,i)=>{
+      const isDone=done.includes(i);
+      html+=`<div class="topic-item ${isDone?'done':''}" onclick="toggleTopic('${sub.key}',${i})">
+        <div class="topic-check">${isDone?'<svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div>
+        <div class="topic-name">${t}</div>
+      </div>`;
+    });
+    html+=`</div></div>`;
+  });
+  document.getElementById('syllabus-content').innerHTML=html;
+}
+
+function toggleTopic(key,idx){
+  const done=K('topics_'+key)||[];
+  const i=done.indexOf(idx);
+  if(i>-1)done.splice(i,1);else done.push(idx);
+  W('topics_'+key,done);
+  renderSyllabus();
+  renderOverview();
+}
+
+// ─── MOCK TESTS ────────────────────────────
+let mockChartInst=null;
+function renderMockChart(){
+  const mocks=K('mocks')||[];
+  const ctx=document.getElementById('mock-chart');
+  if(mockChartInst)mockChartInst.destroy();
+  if(!mocks.length)return;
+  mockChartInst=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:mocks.map((m,i)=>m.label||'M'+(i+1)),
+      datasets:[{
+        label:'Score',data:mocks.map(m=>m.score),
+        borderColor:'#7c5cfc',backgroundColor:'rgba(124,92,252,0.08)',
+        pointBackgroundColor:'#fc5c7d',pointBorderColor:'#fc5c7d',
+        pointRadius:5,tension:0.4,fill:true,borderWidth:2
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{
+        y:{min:0,max:300,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b6890',font:{size:10},stepSize:50}},
+        x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b6890',font:{size:10},maxRotation:45,autoSkip:false}}
+      }
+    }
+  });
+}
+
+function renderMockList(){
+  const mocks=K('mocks')||[];
+  document.getElementById('mk-count').textContent=mocks.length;
+  if(!mocks.length){
+    document.getElementById('mk-avg').textContent='—';
+    document.getElementById('mk-best').textContent='—';
+    document.getElementById('ov-best').textContent='—';
+    document.getElementById('mock-list').innerHTML='<div style="color:var(--muted);font-size:12px">No mocks logged yet.</div>';
+    return;
+  }
+  const avg=Math.round(mocks.reduce((a,m)=>a+m.score,0)/mocks.length);
+  const best=Math.max(...mocks.map(m=>m.score));
+  document.getElementById('mk-avg').textContent=avg;
+  document.getElementById('mk-best').textContent=best;
+  document.getElementById('ov-best').textContent=best;
+  const colors=s=>s>=200?'var(--mint)':s>=150?'var(--amber)':'var(--rose)';
+  document.getElementById('mock-list').innerHTML=mocks.map((m,i)=>`
+    <div class="mock-item">
+      <div class="mock-num">M${i+1}</div>
+      <div class="mock-score-val" style="color:${colors(m.score)}">${m.score}</div>
+      <div class="mock-bar-track"><div class="mock-bar-fill" style="width:${Math.round(m.score/300*100)}%"></div></div>
+      <div class="mock-label-text">${m.label||''}</div>
+      <div class="mock-delete" onclick="deleteMock(${i})">✕</div>
+    </div>`).join('');
+}
+
+function addMock(){
+  const score=parseInt(document.getElementById('new-score').value);
+  const label=document.getElementById('new-label').value.trim();
+  if(isNaN(score)||score<0||score>300){alert('Enter a valid score (0–300)');return;}
+  const mocks=K('mocks')||[];
+  mocks.push({score,label});
+  W('mocks',mocks);
+  document.getElementById('new-score').value='';
+  document.getElementById('new-label').value='';
+  renderMockList();
+  renderMockChart();
+  renderOverview();
+}
+
+function deleteMock(i){
+  if(!confirm('Delete this mock entry?'))return;
+  const mocks=K('mocks')||[];
+  mocks.splice(i,1);
+  W('mocks',mocks);
+  renderMockList();
+  renderMockChart();
+  renderOverview();
+}
+
+init();
+</script>
+</body>
+</html>
