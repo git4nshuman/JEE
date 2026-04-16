@@ -5,51 +5,75 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>JEE Command — Anshuman</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
+
 :root{
-  --bg:#080810;
-  --s1:#0f0f1a;
-  --s2:#14141f;
-  --s3:#1c1c2e;
-  --border:#ffffff0f;
-  --border2:#ffffff1a;
-  --border3:#ffffff2a;
-  --accent:#7c5cfc;
-  --accent-dim:#7c5cfc33;
-  --rose:#fc5c7d;
-  --rose-dim:#fc5c7d22;
-  --mint:#3de8a0;
-  --mint-dim:#3de8a022;
-  --amber:#f5a623;
-  --amber-dim:#f5a62322;
-  --text:#eeeaff;
+  --bg:#04040d;
+  --s1:#07071a;
+  --s2:#0d0d24;
+  --s3:#13132e;
+  --s4:#1a1a38;
+  --border:#ffffff08;
+  --border2:#ffffff12;
+  --border3:#ffffff20;
+  --border4:#ffffff35;
+  --accent:#7b5ea7;
+  --accent2:#a78bfa;
+  --accent-glow:#7b5ea740;
+  --rose:#f43f5e;
+  --rose-dim:#f43f5e18;
+  --mint:#10d9a0;
+  --mint-dim:#10d9a018;
+  --amber:#f59e0b;
+  --amber-dim:#f59e0b18;
+  --cyan:#06b6d4;
+  --cyan-dim:#06b6d418;
+  --text:#f0eeff;
   --muted:#6b6890;
   --muted2:#9994b8;
-  --radius:12px;
-  --radius-sm:8px;
+  --r:14px;
+  --r-sm:8px;
+  --r-xs:6px;
 }
+
 html{scroll-behavior:smooth}
 body{
   background:var(--bg);
-  font-family:'Syne',sans-serif;
+  font-family:'Space Grotesk',sans-serif;
   color:var(--text);
   min-height:100vh;
   overflow-x:hidden;
 }
 
-/* NOISE OVERLAY */
+/* ANIMATED GRID BG */
 body::before{
   content:'';position:fixed;inset:0;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events:none;z-index:0;opacity:.4;
+  background-image:
+    linear-gradient(rgba(123,94,167,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(123,94,167,0.03) 1px,transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;z-index:0;
+  animation:gridShift 20s linear infinite;
 }
+@keyframes gridShift{from{background-position:0 0}to{background-position:60px 60px}}
+
+body::after{
+  content:'';position:fixed;inset:0;
+  background:
+    radial-gradient(ellipse 600px 400px at 10% 20%,rgba(123,94,167,0.08),transparent),
+    radial-gradient(ellipse 400px 300px at 90% 80%,rgba(16,217,160,0.05),transparent),
+    radial-gradient(ellipse 500px 300px at 50% 50%,rgba(244,63,94,0.04),transparent);
+  pointer-events:none;z-index:0;
+  animation:bgPulse 8s ease-in-out infinite alternate;
+}
+@keyframes bgPulse{0%{opacity:.6}100%{opacity:1}}
 
 /* SCROLLBAR */
-::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px}
 
 /* LAYOUT */
@@ -57,439 +81,948 @@ body::before{
 
 /* SIDEBAR */
 .sidebar{
-  width:220px;min-height:100vh;background:var(--s1);
-  border-right:0.5px solid var(--border2);
+  width:240px;min-height:100vh;
+  background:linear-gradient(180deg,rgba(7,7,26,0.98),rgba(4,4,13,0.98));
+  border-right:1px solid var(--border2);
   display:flex;flex-direction:column;
   position:sticky;top:0;height:100vh;overflow:hidden;
   flex-shrink:0;
+  backdrop-filter:blur(20px);
 }
-.sidebar-logo{padding:28px 20px 20px;border-bottom:0.5px solid var(--border)}
-.logo-text{font-size:18px;font-weight:800;letter-spacing:2px;color:var(--accent)}
-.logo-sub{font-size:10px;color:var(--muted);letter-spacing:1px;margin-top:2px}
-.sidebar-countdown{padding:16px 20px;border-bottom:0.5px solid var(--border)}
-.cd-label{font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:4px}
-.cd-value{font-size:28px;font-weight:800;color:var(--accent);font-family:'JetBrains Mono',monospace;line-height:1}
-.cd-unit{font-size:10px;color:var(--muted);margin-top:2px}
-.cd-date{font-size:10px;color:var(--muted2);margin-top:6px;font-family:'JetBrains Mono',monospace}
-.sidebar-nav{padding:12px 10px;flex:1}
+
+.sidebar-logo{
+  padding:28px 22px 22px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.logo-text{
+  font-size:20px;font-weight:700;
+  background:linear-gradient(135deg,var(--accent2),var(--mint));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  letter-spacing:1px;
+}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:2px;margin-top:3px;text-transform:uppercase}
+.logo-pulse{
+  position:absolute;top:24px;right:18px;
+  width:8px;height:8px;background:var(--mint);border-radius:50%;
+}
+.logo-pulse::after{
+  content:'';position:absolute;inset:-4px;
+  border-radius:50%;border:2px solid var(--mint);
+  animation:sonar 2s ease-out infinite;
+}
+@keyframes sonar{0%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(2.5)}}
+
+.sidebar-countdown{
+  padding:18px 22px;
+  border-bottom:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(123,94,167,0.06),transparent);
+}
+.cd-label{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px}
+.cd-value{
+  font-size:42px;font-weight:700;
+  font-family:'JetBrains Mono',monospace;
+  background:linear-gradient(135deg,var(--accent2),var(--rose));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1;
+}
+.cd-unit{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+.cd-date{font-size:10px;color:var(--muted2);margin-top:8px;font-family:'JetBrains Mono',monospace}
+.prog-track{height:2px;background:var(--s3);border-radius:2px;margin-top:10px;overflow:hidden}
+.prog-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--accent2),var(--mint));transition:width 1s cubic-bezier(.4,0,.2,1)}
+
+.sidebar-nav{padding:14px 10px;flex:1;overflow-y:auto}
+.nav-section-label{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;padding:8px 12px 4px}
 .nav-item{
-  display:flex;align-items:center;gap:10px;padding:10px 12px;
-  border-radius:var(--radius-sm);cursor:pointer;
-  color:var(--muted2);font-size:13px;font-weight:500;
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:var(--r-sm);
+  cursor:pointer;color:var(--muted2);font-size:13px;font-weight:500;
   transition:all .2s;margin-bottom:2px;
-  border:0.5px solid transparent;
+  border:1px solid transparent;position:relative;overflow:hidden;
 }
-.nav-item:hover{color:var(--text);background:var(--s2)}
-.nav-item.active{color:var(--text);background:var(--accent-dim);border-color:var(--accent)33}
-.nav-icon{font-size:15px;width:18px;text-align:center}
-.sidebar-footer{padding:16px 20px;border-top:0.5px solid var(--border)}
-.today-chip{
-  background:var(--s3);border:0.5px solid var(--border2);
-  border-radius:var(--radius-sm);padding:8px 10px;
-  font-size:10px;color:var(--muted2);font-family:'JetBrains Mono',monospace;
-  line-height:1.6;
+.nav-item::before{
+  content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);
+  width:0;height:20px;background:var(--accent2);border-radius:0 2px 2px 0;
+  transition:width .2s;
 }
+.nav-item:hover{color:var(--text);background:rgba(123,94,167,0.08)}
+.nav-item:hover::before{width:2px}
+.nav-item.active{
+  color:var(--text);
+  background:rgba(123,94,167,0.15);
+  border-color:rgba(123,94,167,0.3);
+}
+.nav-item.active::before{width:3px}
+.nav-badge{
+  margin-left:auto;font-size:9px;
+  background:var(--accent-glow);color:var(--accent2);
+  padding:2px 6px;border-radius:10px;
+  font-family:'JetBrains Mono',monospace;
+}
+.nav-icon{width:20px;text-align:center;font-size:14px}
+
+.sidebar-footer{
+  padding:14px 18px;border-top:1px solid var(--border);
+}
+.streak-pill{
+  display:flex;align-items:center;gap:8px;
+  background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2);
+  border-radius:var(--r-sm);padding:8px 10px;
+}
+.streak-icon{font-size:16px}
+.streak-text{font-size:11px;color:var(--amber)}
+.streak-num{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--amber)}
 
 /* MAIN */
-.main{flex:1;padding:32px;overflow-x:hidden}
+.main{flex:1;padding:36px;overflow-x:hidden;max-width:calc(100vw - 240px)}
 .page{display:none}
-.page.active{display:block}
-.page-title{font-size:22px;font-weight:800;margin-bottom:4px}
-.page-sub{font-size:13px;color:var(--muted);margin-bottom:28px}
+.page.active{display:block;animation:pageIn .35s cubic-bezier(.4,0,.2,1)}
+@keyframes pageIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-/* CARDS */
-.card{
-  background:var(--s1);border:0.5px solid var(--border2);
-  border-radius:var(--radius);padding:20px;
+.page-header{margin-bottom:28px}
+.page-title{font-size:28px;font-weight:700;letter-spacing:-.5px}
+.page-title span{
+  background:linear-gradient(135deg,var(--accent2),var(--mint));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
 }
-.card-title{font-size:11px;letter-spacing:1px;color:var(--muted);text-transform:uppercase;margin-bottom:14px;font-weight:500}
+.page-sub{font-size:13px;color:var(--muted);margin-top:4px}
+
+/* GLASS CARD */
+.card{
+  background:linear-gradient(135deg,rgba(13,13,36,0.9),rgba(7,7,26,0.9));
+  border:1px solid var(--border2);border-radius:var(--r);padding:22px;
+  backdrop-filter:blur(10px);position:relative;overflow:hidden;
+  transition:border-color .3s;
+}
+.card:hover{border-color:var(--border3)}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(123,94,167,0.4),transparent);
+}
+.card-title{
+  font-size:10px;letter-spacing:2px;color:var(--muted);
+  text-transform:uppercase;margin-bottom:16px;font-weight:500;
+  display:flex;align-items:center;gap:8px;
+}
 
 /* STAT GRID */
-.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
 .stat-card{
-  background:var(--s2);border:0.5px solid var(--border2);
-  border-radius:var(--radius);padding:16px;
+  background:linear-gradient(135deg,rgba(13,13,36,0.9),rgba(7,7,26,0.9));
+  border:1px solid var(--border2);border-radius:var(--r);padding:18px;
+  position:relative;overflow:hidden;transition:all .3s;cursor:default;
 }
-.stat-label{font-size:10px;color:var(--muted);letter-spacing:.5px;margin-bottom:6px}
-.stat-value{font-size:24px;font-weight:800;color:var(--text);font-family:'JetBrains Mono',monospace;line-height:1}
-.stat-sub{font-size:10px;color:var(--muted);margin-top:4px}
-.stat-accent{color:var(--accent)}
-.stat-rose{color:var(--rose)}
-.stat-mint{color:var(--mint)}
-.stat-amber{color:var(--amber)}
+.stat-card:hover{transform:translateY(-2px);border-color:var(--border4)}
+.stat-card::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+}
+.sc-accent::after{background:linear-gradient(90deg,var(--accent2),transparent)}
+.sc-mint::after{background:linear-gradient(90deg,var(--mint),transparent)}
+.sc-amber::after{background:linear-gradient(90deg,var(--amber),transparent)}
+.sc-rose::after{background:linear-gradient(90deg,var(--rose),transparent)}
+.sc-cyan::after{background:linear-gradient(90deg,var(--cyan),transparent)}
+.stat-label{font-size:9px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px}
+.stat-value{font-size:30px;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1}
+.stat-sub{font-size:10px;color:var(--muted);margin-top:5px}
+.sv-accent{color:var(--accent2)}
+.sv-mint{color:var(--mint)}
+.sv-amber{color:var(--amber)}
+.sv-rose{color:var(--rose)}
+.sv-cyan{color:var(--cyan)}
 
-/* GRID LAYOUTS */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px}
+.g13{display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:16px}
 .mb16{margin-bottom:16px}
 
 /* SUBJECT BARS */
-.subj-row{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-.subj-name{font-size:12px;min-width:90px;color:var(--text);font-weight:500}
-.bar-track{flex:1;height:5px;background:var(--s3);border-radius:10px;overflow:hidden}
-.bar-fill{height:100%;border-radius:10px;transition:width .8s cubic-bezier(.4,0,.2,1)}
-.bar-pct{font-size:11px;font-family:'JetBrains Mono',monospace;min-width:34px;text-align:right;color:var(--muted2)}
+.subj-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.subj-row:last-child{margin-bottom:0}
+.subj-name{font-size:12px;min-width:80px;font-weight:500}
+.bar-track{flex:1;height:6px;background:var(--s3);border-radius:10px;overflow:hidden}
+.bar-fill{height:100%;border-radius:10px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.bar-pct{font-size:11px;font-family:'JetBrains Mono',monospace;min-width:36px;text-align:right;color:var(--muted2)}
 
-/* YEAR CALENDAR */
-.year-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:20px}
-.month-block{background:var(--s2);border:0.5px solid var(--border2);border-radius:var(--radius);padding:14px}
-.month-name{font-size:11px;font-weight:600;letter-spacing:1px;color:var(--muted2);margin-bottom:10px;text-transform:uppercase}
-.month-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
-.day-cell{
-  width:100%;aspect-ratio:1;border-radius:3px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:8px;font-family:'JetBrains Mono',monospace;
-  color:var(--muted);background:var(--s3);cursor:pointer;
-  transition:transform .1s;border:0.5px solid transparent;
+/* QUOTE */
+.quote-strip{
+  border:1px solid rgba(123,94,167,0.25);border-left:3px solid var(--accent2);
+  border-radius:0 var(--r) var(--r) 0;
+  padding:14px 18px;margin-bottom:22px;
+  font-size:13px;color:var(--muted2);font-style:italic;line-height:1.7;
+  background:rgba(123,94,167,0.05);
+  position:relative;overflow:hidden;
+  cursor:pointer;transition:all .3s;
 }
-.day-cell:hover{transform:scale(1.2);border-color:var(--border3)}
-.day-cell.studied{background:var(--mint);color:#000;font-weight:500}
-.day-cell.today{border-color:var(--accent);color:var(--accent)}
-.day-cell.today.studied{background:var(--accent);color:#fff;border-color:var(--accent)}
-.day-cell.empty{background:transparent;cursor:default}
-.day-cell.empty:hover{transform:none}
-.day-cell.future{opacity:.3;cursor:default}
-.day-cell.future:hover{transform:none}
-.weekday-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px}
-.wd{font-size:7px;color:var(--muted);text-align:center;font-family:'JetBrains Mono',monospace}
+.quote-strip:hover{border-left-color:var(--mint);background:rgba(16,217,160,0.04)}
+.quote-refresh{position:absolute;top:10px;right:12px;font-size:10px;color:var(--muted);opacity:0;transition:opacity .3s}
+.quote-strip:hover .quote-refresh{opacity:1}
 
-/* LOG SESSION */
-.slider-wrap{margin-bottom:16px}
-.slider-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-.slider-name{font-size:13px;color:var(--text);font-weight:500}
-.slider-val{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--accent);background:var(--accent-dim);padding:2px 8px;border-radius:4px}
+/* SLIDERS */
+.slider-wrap{margin-bottom:18px}
+.slider-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.slider-name{font-size:13px;font-weight:500}
+.slider-val{
+  font-size:11px;font-family:'JetBrains Mono',monospace;
+  padding:2px 10px;border-radius:20px;font-weight:700;
+}
+.sv-p{background:rgba(167,139,250,0.15);color:var(--accent2)}
+.sv-c{background:var(--rose-dim);color:var(--rose)}
+.sv-m{background:var(--mint-dim);color:var(--mint)}
+
 input[type=range]{
   width:100%;height:4px;-webkit-appearance:none;
-  background:var(--s3);border-radius:10px;outline:none;cursor:pointer;
+  border-radius:10px;outline:none;cursor:pointer;
 }
+.range-phy{background:linear-gradient(90deg,var(--accent2) var(--pct,0%),var(--s3) var(--pct,0%))}
+.range-che{background:linear-gradient(90deg,var(--rose) var(--pct,0%),var(--s3) var(--pct,0%))}
+.range-mat{background:linear-gradient(90deg,var(--mint) var(--pct,0%),var(--s3) var(--pct,0%))}
 input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:none;width:16px;height:16px;
-  border-radius:50%;background:var(--accent);cursor:pointer;
-  box-shadow:0 0 0 3px var(--accent-dim);transition:box-shadow .2s;
+  -webkit-appearance:none;width:18px;height:18px;
+  border-radius:50%;cursor:pointer;transition:all .2s;border:2px solid var(--bg);
 }
-input[type=range]::-webkit-slider-thumb:hover{box-shadow:0 0 0 6px var(--accent-dim)}
+#sl-phy::-webkit-slider-thumb{background:var(--accent2);box-shadow:0 0 10px var(--accent-glow)}
+#sl-che::-webkit-slider-thumb{background:var(--rose);box-shadow:0 0 10px rgba(244,63,94,0.4)}
+#sl-mat::-webkit-slider-thumb{background:var(--mint);box-shadow:0 0 10px rgba(16,217,160,0.4)}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2)}
+
 .session-total{
   display:flex;align-items:center;justify-content:space-between;
-  padding:12px 16px;background:var(--s3);border-radius:var(--radius-sm);
-  margin-top:16px;border:0.5px solid var(--border2);
+  padding:14px 18px;background:rgba(16,217,160,0.06);border-radius:var(--r-sm);
+  margin-top:18px;border:1px solid rgba(16,217,160,0.15);
 }
 .total-label{font-size:12px;color:var(--muted)}
-.total-val{font-size:20px;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--mint)}
+.total-val{font-size:24px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--mint)}
+
 .log-btn{
-  background:var(--accent);color:#fff;border:none;
-  padding:10px 24px;border-radius:var(--radius-sm);
-  font-size:13px;font-family:'Syne',sans-serif;font-weight:600;
-  cursor:pointer;transition:all .2s;letter-spacing:.5px;margin-top:12px;
-  width:100%;
+  background:linear-gradient(135deg,var(--accent),#6d28d9);
+  color:#fff;border:none;padding:12px 24px;border-radius:var(--r-sm);
+  font-size:13px;font-family:'Space Grotesk',sans-serif;font-weight:600;
+  cursor:pointer;transition:all .3s;width:100%;margin-top:14px;
+  position:relative;overflow:hidden;letter-spacing:.5px;
 }
-.log-btn:hover{opacity:.85;transform:translateY(-1px)}
+.log-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.log-btn:hover::before{opacity:1}
+.log-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(123,94,167,0.4)}
 .log-btn:active{transform:scale(.98)}
 
 /* SESSION LIST */
 .session-item{
   display:flex;align-items:center;gap:12px;
-  padding:10px 0;border-bottom:0.5px solid var(--border);
+  padding:10px 0;border-bottom:1px solid var(--border);
+  transition:opacity .2s;
 }
 .session-item:last-child{border-bottom:none}
-.sess-date{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;min-width:70px}
-.sess-pills{display:flex;gap:6px;flex:1}
-.pill{font-size:10px;padding:2px 8px;border-radius:10px;font-family:'JetBrains Mono',monospace}
-.pill-phy{background:var(--accent-dim);color:var(--accent)}
-.pill-che{background:var(--rose-dim);color:var(--rose)}
-.pill-mat{background:var(--mint-dim);color:var(--mint)}
-.sess-total{font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--text)}
+.session-item:hover{opacity:.85}
+.sess-date{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;min-width:75px}
+.sess-pills{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+.pill{font-size:10px;padding:2px 8px;border-radius:20px;font-family:'JetBrains Mono',monospace;font-weight:500}
+.pill-p{background:rgba(167,139,250,0.15);color:var(--accent2)}
+.pill-c{background:var(--rose-dim);color:var(--rose)}
+.pill-m{background:var(--mint-dim);color:var(--mint)}
+.sess-total{font-size:13px;font-weight:700;font-family:'JetBrains Mono',monospace}
+
+/* CALENDAR */
+.year-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:22px}
+.month-block{
+  background:rgba(13,13,36,0.8);border:1px solid var(--border2);
+  border-radius:var(--r);padding:16px;transition:border-color .3s;
+}
+.month-block:hover{border-color:var(--border3)}
+.month-name{font-size:10px;font-weight:600;letter-spacing:2px;color:var(--muted2);margin-bottom:12px;text-transform:uppercase}
+.month-days{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.wd{font-size:7px;color:var(--muted);text-align:center;font-family:'JetBrains Mono',monospace;margin-bottom:2px}
+.weekday-labels{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px}
+.day-cell{
+  aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-size:7.5px;font-family:'JetBrains Mono',monospace;
+  background:var(--s2);cursor:pointer;transition:all .15s;
+  border:1px solid transparent;color:var(--muted);
+}
+.day-cell:hover{border-color:var(--border3);transform:scale(1.15)}
+.day-cell.studied{background:var(--mint);color:#000;font-weight:700}
+.day-cell.today{border-color:var(--accent2)!important;color:var(--accent2)}
+.day-cell.today.studied{background:var(--accent2);color:#fff}
+.day-cell.empty{background:transparent;cursor:default;border:none}
+.day-cell.empty:hover{transform:none}
+.day-cell.future{opacity:.2;cursor:default;pointer-events:none}
+.day-cell.half{background:rgba(16,217,160,0.4);color:var(--mint)}
+
+/* HEATMAP LEGEND */
+.legend-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:22px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.legend-box{width:12px;height:12px;border-radius:3px}
 
 /* TOPICS */
-.subject-section{margin-bottom:20px}
+.subject-section{margin-bottom:16px}
 .subject-header{
   display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:12px;
+  margin-bottom:14px;padding-bottom:10px;
+  border-bottom:1px solid var(--border);
 }
-.subject-title{font-size:14px;font-weight:700}
-.subject-prog{font-size:11px;font-family:'JetBrains Mono',monospace;color:var(--muted)}
-.topics-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px}
+.subject-title-wrap{display:flex;align-items:center;gap:10px}
+.subject-dot{width:8px;height:8px;border-radius:50%}
+.subject-title{font-size:15px;font-weight:600}
+.subject-prog{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.topics-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px}
 .topic-item{
   display:flex;align-items:center;gap:8px;
-  background:var(--s2);border:0.5px solid var(--border2);
-  border-radius:var(--radius-sm);padding:8px 10px;cursor:pointer;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:var(--r-sm);padding:9px 12px;cursor:pointer;
   transition:all .2s;
 }
-.topic-item:hover{border-color:var(--border3);background:var(--s3)}
-.topic-item.done{background:var(--mint-dim);border-color:var(--mint)33}
+.topic-item:hover{border-color:var(--border3);background:var(--s3);transform:translateX(2px)}
+.topic-item.done{
+  background:rgba(16,217,160,0.06);
+  border-color:rgba(16,217,160,0.2);
+}
+.topic-item.done:hover{background:rgba(16,217,160,0.1)}
 .topic-check{
-  width:16px;height:16px;border-radius:3px;
-  border:1.5px solid var(--border3);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;
+  width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border3);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
   transition:all .2s;
 }
 .topic-item.done .topic-check{background:var(--mint);border-color:var(--mint)}
-.topic-name{font-size:11px;color:var(--text);line-height:1.3}
+.topic-name{font-size:11px;line-height:1.4;transition:color .2s}
 .topic-item.done .topic-name{color:var(--mint)}
 
 /* MOCK TESTS */
-.score-entry{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap}
 .score-inp{
-  background:var(--s3);border:0.5px solid var(--border2);
-  border-radius:var(--radius-sm);padding:8px 12px;
-  color:var(--text);font-family:'Syne',sans-serif;font-size:13px;
-  width:100px;outline:none;transition:border-color .2s;
+  background:var(--s3);border:1px solid var(--border2);
+  border-radius:var(--r-sm);padding:10px 14px;
+  color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;
+  outline:none;transition:all .2s;
 }
-.score-inp:focus{border-color:var(--accent)}
+.score-inp:focus{border-color:var(--accent2);box-shadow:0 0 0 3px rgba(123,94,167,0.15)}
 .add-btn{
-  background:var(--mint);color:#000;border:none;
-  padding:8px 20px;border-radius:var(--radius-sm);
-  font-size:12px;font-family:'Syne',sans-serif;font-weight:700;
+  background:linear-gradient(135deg,var(--mint),#059669);
+  color:#000;border:none;padding:10px 20px;border-radius:var(--r-sm);
+  font-size:12px;font-family:'Space Grotesk',sans-serif;font-weight:700;
   cursor:pointer;transition:all .2s;
 }
-.add-btn:hover{opacity:.85}
+.add-btn:hover{opacity:.85;transform:translateY(-1px)}
+
 .mock-item{
   display:flex;align-items:center;gap:12px;
-  padding:10px 0;border-bottom:0.5px solid var(--border);
+  padding:12px 0;border-bottom:1px solid var(--border);
+  transition:all .2s;
 }
-.mock-num{font-size:10px;color:var(--muted);min-width:24px;font-family:'JetBrains Mono',monospace}
-.mock-score-val{
-  font-size:18px;font-weight:800;font-family:'JetBrains Mono',monospace;
-  min-width:60px;
+.mock-item:last-child{border-bottom:none}
+.mock-item:hover{background:var(--s2);padding-left:8px;border-radius:var(--r-xs);margin-left:-8px;padding-right:8px}
+.mock-num{font-size:10px;color:var(--muted);min-width:28px;font-family:'JetBrains Mono',monospace}
+.mock-score-val{font-size:20px;font-weight:700;font-family:'JetBrains Mono',monospace;min-width:56px}
+.mock-bar-track{flex:1;height:4px;background:var(--s3);border-radius:10px;overflow:hidden}
+.mock-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--accent2),var(--rose));transition:width .8s}
+.mock-label-text{font-size:10px;color:var(--muted);min-width:80px}
+.mock-delete{
+  font-size:11px;color:var(--muted);cursor:pointer;
+  padding:4px 8px;border-radius:var(--r-xs);transition:all .2s;
+  background:transparent;border:none;font-family:'JetBrains Mono',monospace;
 }
-.mock-bar-track{flex:1;height:3px;background:var(--s3);border-radius:10px;overflow:hidden}
-.mock-bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--accent),var(--rose))}
-.mock-label-text{font-size:10px;color:var(--muted);min-width:60px;text-align:right}
-.mock-delete{font-size:12px;color:var(--muted);cursor:pointer;padding:2px 6px;border-radius:4px;transition:all .2s}
 .mock-delete:hover{color:var(--rose);background:var(--rose-dim)}
 
-/* QUOTE STRIP */
-.quote-strip{
-  background:linear-gradient(135deg,var(--s2),var(--s1));
-  border:0.5px solid var(--accent)33;border-radius:var(--radius);
-  padding:14px 18px;margin-bottom:20px;
-  font-size:13px;color:var(--muted2);font-style:italic;line-height:1.6;
-  border-left:2px solid var(--accent);
+/* POMODORO */
+.pomo-ring{
+  position:relative;width:200px;height:200px;
+  margin:0 auto 20px;cursor:pointer;
 }
+.pomo-ring svg{transform:rotate(-90deg)}
+.pomo-ring-track{fill:none;stroke:var(--s3);stroke-width:8}
+.pomo-ring-fill{
+  fill:none;stroke-width:8;stroke-linecap:round;
+  stroke-dasharray:565;stroke-dashoffset:0;
+  transition:stroke-dashoffset .5s,stroke .3s;
+}
+.pomo-center{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+}
+.pomo-time{font-size:36px;font-weight:700;font-family:'JetBrains Mono',monospace}
+.pomo-mode{font-size:10px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:2px}
+.pomo-btns{display:flex;gap:10px;justify-content:center;margin-bottom:16px}
+.pomo-btn{
+  background:var(--s3);border:1px solid var(--border2);border-radius:var(--r-sm);
+  padding:8px 20px;color:var(--text);font-size:12px;font-family:'Space Grotesk',sans-serif;
+  font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.5px;
+}
+.pomo-btn:hover{border-color:var(--border4);background:var(--s4)}
+.pomo-btn.primary{background:linear-gradient(135deg,var(--accent),#6d28d9);border-color:transparent;color:#fff}
+.pomo-btn.primary:hover{box-shadow:0 4px 20px rgba(123,94,167,0.4)}
+.pomo-presets{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.pomo-preset{
+  font-size:10px;padding:4px 12px;border-radius:20px;cursor:pointer;
+  border:1px solid var(--border2);color:var(--muted2);background:transparent;
+  transition:all .2s;font-family:'JetBrains Mono',monospace;
+}
+.pomo-preset:hover,.pomo-preset.active{border-color:var(--accent2);color:var(--accent2);background:rgba(167,139,250,0.1)}
+.pomo-sessions{display:flex;gap:6px;justify-content:center;margin-top:12px}
+.pomo-dot{width:10px;height:10px;border-radius:50%;background:var(--s3);border:1px solid var(--border2);transition:all .3s}
+.pomo-dot.done{background:var(--mint);border-color:var(--mint);box-shadow:0 0 6px rgba(16,217,160,0.5)}
 
-/* BADGE */
+/* BADGES */
 .badge{
-  display:inline-block;font-size:9px;padding:2px 7px;
-  border-radius:10px;font-weight:600;letter-spacing:.5px;
-  font-family:'JetBrains Mono',monospace;
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:9px;padding:3px 8px;border-radius:20px;
+  font-weight:600;letter-spacing:.5px;font-family:'JetBrains Mono',monospace;
 }
-.badge-acc{background:var(--accent-dim);color:var(--accent)}
-.badge-rose{background:var(--rose-dim);color:var(--rose)}
-.badge-mint{background:var(--mint-dim);color:var(--mint)}
-.badge-amber{background:var(--amber-dim);color:var(--amber)}
+.b-accent{background:rgba(167,139,250,0.15);color:var(--accent2)}
+.b-rose{background:var(--rose-dim);color:var(--rose)}
+.b-mint{background:var(--mint-dim);color:var(--mint)}
+.b-amber{background:var(--amber-dim);color:var(--amber)}
 
-/* PROGRESS BAR TOP */
-.prog-strip{
-  height:2px;background:var(--s3);border-radius:2px;
-  margin-top:8px;overflow:hidden;
+/* LIVE DOT */
+.live-dot{
+  width:7px;height:7px;background:var(--mint);border-radius:50%;
+  display:inline-block;animation:livePulse 2s infinite;
 }
-.prog-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--mint));border-radius:2px;transition:width .8s}
+@keyframes livePulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(16,217,160,0.4)}50%{opacity:.7;box-shadow:0 0 0 4px rgba(16,217,160,0)}}
 
-/* ANIMATIONS */
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.page.active{animation:fadeUp .3s ease}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.live-dot{width:6px;height:6px;background:var(--mint);border-radius:50%;display:inline-block;animation:pulse 2s infinite;margin-right:6px}
+/* NOTIFICATION TOAST */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:1000;
+  background:linear-gradient(135deg,rgba(13,13,36,0.95),rgba(7,7,26,0.95));
+  border:1px solid var(--border3);border-radius:var(--r);
+  padding:14px 20px;
+  backdrop-filter:blur(20px);
+  display:flex;align-items:center;gap:12px;
+  font-size:13px;min-width:260px;
+  transform:translateY(120%);opacity:0;
+  transition:all .4s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-icon{font-size:18px}
+.toast-msg{flex:1}
+.toast-close{color:var(--muted);cursor:pointer;font-size:16px;line-height:1}
+
+/* EXPORT/IMPORT BAR */
+.action-bar{
+  display:flex;gap:10px;align-items:center;
+  padding:10px 0;margin-bottom:22px;flex-wrap:wrap;
+}
+.action-btn{
+  background:var(--s2);border:1px solid var(--border2);border-radius:var(--r-sm);
+  padding:8px 16px;color:var(--muted2);font-size:11px;font-family:'Space Grotesk',sans-serif;
+  font-weight:500;cursor:pointer;transition:all .2s;letter-spacing:.5px;
+  display:flex;align-items:center;gap:6px;
+}
+.action-btn:hover{border-color:var(--border4);color:var(--text)}
+
+/* FOCUS MODE */
+.focus-overlay{
+  display:none;position:fixed;inset:0;background:rgba(4,4,13,0.97);
+  z-index:500;flex-direction:column;align-items:center;justify-content:center;
+}
+.focus-overlay.active{display:flex;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.focus-close{
+  position:absolute;top:24px;right:24px;background:var(--s2);
+  border:1px solid var(--border2);border-radius:var(--r-sm);padding:8px 16px;
+  color:var(--muted2);cursor:pointer;font-size:12px;font-family:'Space Grotesk',sans-serif;
+}
+.focus-label{font-size:11px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:16px}
+.focus-time{font-size:100px;font-family:'JetBrains Mono',monospace;font-weight:700;
+  background:linear-gradient(135deg,var(--accent2),var(--mint));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.focus-subject{font-size:14px;color:var(--muted2);margin-top:12px;letter-spacing:1px}
+
+/* ANALYTICS */
+.insight-card{
+  background:rgba(13,13,36,0.8);border:1px solid var(--border2);
+  border-radius:var(--r);padding:16px 20px;
+  display:flex;align-items:flex-start;gap:14px;transition:border-color .3s;
+}
+.insight-card:hover{border-color:var(--border3)}
+.insight-icon{font-size:24px;flex-shrink:0;margin-top:2px}
+.insight-title{font-size:13px;font-weight:600;margin-bottom:4px}
+.insight-body{font-size:12px;color:var(--muted2);line-height:1.6}
+.insights-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+
+/* WEEK CHART */
+.week-chart{display:flex;align-items:flex-end;gap:6px;height:80px;padding-top:8px}
+.week-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.week-bar{
+  width:100%;border-radius:4px 4px 0 0;min-height:2px;
+  background:linear-gradient(180deg,var(--accent2),rgba(123,94,167,0.3));
+  transition:height .8s cubic-bezier(.4,0,.2,1);position:relative;
+}
+.week-bar:hover{opacity:.8}
+.week-bar-tooltip{
+  position:absolute;top:-24px;left:50%;transform:translateX(-50%);
+  font-size:9px;font-family:'JetBrains Mono',monospace;
+  background:var(--s3);border:1px solid var(--border2);
+  border-radius:4px;padding:2px 6px;white-space:nowrap;color:var(--text);
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.week-bar:hover .week-bar-tooltip{opacity:1}
+.week-label{font-size:9px;color:var(--muted);font-family:'JetBrains Mono',monospace}
+.week-label.today{color:var(--accent2)}
+
+/* MINI CHART */
+.mini-sparkline{display:flex;align-items:flex-end;gap:3px;height:40px}
+.spark-bar{min-width:6px;border-radius:2px 2px 0 0;background:rgba(167,139,250,0.4);flex:1}
 
 /* MOBILE */
-@media(max-width:768px){
+@media(max-width:900px){
   .app{flex-direction:column}
-  .sidebar{width:100%;min-height:auto;height:auto;position:relative;flex-direction:row;flex-wrap:wrap}
-  .sidebar-countdown{display:none}
-  .sidebar-footer{display:none}
-  .sidebar-logo{padding:14px 16px;border-bottom:none;border-right:0.5px solid var(--border)}
-  .sidebar-nav{display:flex;padding:8px;gap:4px;overflow-x:auto}
-  .nav-item{padding:8px 12px;white-space:nowrap;margin-bottom:0}
-  .main{padding:16px}
+  .sidebar{width:100%;height:auto;min-height:auto;position:relative;flex-direction:row;flex-wrap:wrap}
+  .sidebar-countdown,.sidebar-footer{display:none}
+  .sidebar-logo{padding:12px 16px;border-bottom:none;border-right:1px solid var(--border)}
+  .sidebar-nav{display:flex;padding:8px;gap:4px;overflow-x:auto;flex-direction:row}
+  .nav-section-label{display:none}
+  .nav-item{padding:8px 14px;margin-bottom:0;white-space:nowrap}
+  .main{padding:18px;max-width:100vw}
   .stat-grid{grid-template-columns:repeat(2,1fr)}
-  .year-grid{grid-template-columns:1fr 1fr}
-  .grid2{grid-template-columns:1fr}
-  .grid3{grid-template-columns:1fr}
+  .g2,.g3,.g13{grid-template-columns:1fr}
+  .year-grid{grid-template-columns:repeat(2,1fr)}
+  .insights-grid{grid-template-columns:1fr}
 }
-@media(max-width:480px){
+@media(max-width:500px){
   .year-grid{grid-template-columns:1fr}
-  .stat-grid{grid-template-columns:1fr 1fr}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
 }
+
+/* NUMBER FLIP ANIMATION */
+@keyframes numFlip{
+  0%{transform:translateY(-20px);opacity:0}
+  100%{transform:translateY(0);opacity:1}
+}
+.num-flip{animation:numFlip .4s cubic-bezier(.4,0,.2,1)}
+
+/* EMPTY STATE */
+.empty-state{
+  text-align:center;padding:40px 20px;color:var(--muted);
+}
+.empty-state-icon{font-size:32px;margin-bottom:12px;opacity:.5}
+.empty-state-text{font-size:13px;line-height:1.6}
+
+/* INPUT TOGGLE */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.toggle-label{font-size:12px;color:var(--muted2)}
+.toggle-switch{
+  width:38px;height:20px;background:var(--s3);border-radius:10px;
+  border:1px solid var(--border2);cursor:pointer;position:relative;transition:background .3s;
+}
+.toggle-switch.on{background:rgba(16,217,160,0.3);border-color:rgba(16,217,160,0.4)}
+.toggle-switch::after{
+  content:'';position:absolute;width:14px;height:14px;border-radius:50%;
+  background:var(--muted);top:2px;left:2px;transition:all .3s;
+}
+.toggle-switch.on::after{left:20px;background:var(--mint)}
 </style>
 </head>
 <body>
 
 <div class="app">
-
 <!-- SIDEBAR -->
 <div class="sidebar">
   <div class="sidebar-logo">
     <div class="logo-text">JEE⚡CMD</div>
-    <div class="logo-sub">ANSHUMAN · MNNIT TARGET</div>
+    <div class="logo-sub">Anshuman · MNNIT Target</div>
+    <div class="logo-pulse"></div>
   </div>
+
   <div class="sidebar-countdown">
-    <div class="cd-label">DAYS TO JEE MAINS</div>
+    <div class="cd-label">Days to JEE Mains</div>
     <div class="cd-value" id="days-count">—</div>
-    <div class="cd-unit">Jan 2027 attempt</div>
-    <div class="prog-strip"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    <div class="cd-unit">January 2027</div>
+    <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
     <div class="cd-date" id="today-str"></div>
   </div>
+
   <nav class="sidebar-nav" id="sidebar-nav">
+    <div class="nav-section-label">Main</div>
     <div class="nav-item active" onclick="goTo('overview')"><span class="nav-icon">⚡</span>Overview</div>
     <div class="nav-item" onclick="goTo('log')"><span class="nav-icon">📝</span>Log Session</div>
+    <div class="nav-item" onclick="goTo('pomodoro')"><span class="nav-icon">⏱</span>Focus Timer</div>
+    <div class="nav-section-label">Track</div>
     <div class="nav-item" onclick="goTo('calendar')"><span class="nav-icon">📅</span>Year Calendar</div>
     <div class="nav-item" onclick="goTo('syllabus')"><span class="nav-icon">📚</span>Syllabus</div>
     <div class="nav-item" onclick="goTo('mocks')"><span class="nav-icon">📊</span>Mock Tests</div>
+    <div class="nav-section-label">More</div>
+    <div class="nav-item" onclick="goTo('analytics')"><span class="nav-icon">🔬</span>Analytics</div>
   </nav>
+
   <div class="sidebar-footer">
-    <div class="today-chip" id="today-chip"></div>
+    <div class="streak-pill" id="streak-pill">
+      <span class="streak-icon">🔥</span>
+      <span class="streak-text"><span class="streak-num" id="sidebar-streak">0</span> day streak</span>
+    </div>
   </div>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-  <!-- OVERVIEW -->
-  <div class="page active" id="page-overview">
-    <div class="page-title">Command Center</div>
-    <div class="page-sub" id="ov-sub">Loading your stats...</div>
-    <div class="quote-strip" id="quote-box"></div>
-    <div class="stat-grid">
-      <div class="stat-card"><div class="stat-label">TODAY</div><div class="stat-value stat-accent" id="ov-today">0h</div><div class="stat-sub">study time</div></div>
-      <div class="stat-card"><div class="stat-label">THIS WEEK</div><div class="stat-value stat-mint" id="ov-week">0h</div><div class="stat-sub">of 35h goal</div></div>
-      <div class="stat-card"><div class="stat-label">STREAK</div><div class="stat-value stat-amber" id="ov-streak">0</div><div class="stat-sub">days 🔥</div></div>
-      <div class="stat-card"><div class="stat-label">BEST MOCK</div><div class="stat-value stat-rose" id="ov-best">—</div><div class="stat-sub">out of 300</div></div>
+<!-- OVERVIEW -->
+<div class="page active" id="page-overview">
+  <div class="page-header">
+    <div class="page-title">Command <span>Center</span></div>
+    <div class="page-sub" id="ov-sub"></div>
+  </div>
+
+  <div class="quote-strip" id="quote-box" onclick="refreshQuote()" title="Click to refresh">
+    <span id="quote-text"></span>
+    <span class="quote-refresh">↻ new quote</span>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card sc-accent">
+      <div class="stat-label">Today</div>
+      <div class="stat-value sv-accent" id="ov-today">0h</div>
+      <div class="stat-sub" id="ov-today-sub">keep going</div>
     </div>
-    <div class="grid2">
-      <div class="card">
-        <div class="card-title">Subject Split (all time)</div>
-        <div class="subj-row">
-          <div class="subj-name">Physics</div>
-          <div class="bar-track"><div class="bar-fill" id="bar-phy" style="background:var(--accent);width:0%"></div></div>
-          <div class="bar-pct" id="pct-phy">0%</div>
-        </div>
-        <div class="subj-row">
-          <div class="subj-name">Chemistry</div>
-          <div class="bar-track"><div class="bar-fill" id="bar-che" style="background:var(--rose);width:0%"></div></div>
-          <div class="bar-pct" id="pct-che">0%</div>
-        </div>
-        <div class="subj-row">
-          <div class="subj-name">Maths</div>
-          <div class="bar-track"><div class="bar-fill" id="bar-mat" style="background:var(--mint);width:0%"></div></div>
-          <div class="bar-pct" id="pct-mat">0%</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-title">Syllabus Progress</div>
-        <div class="subj-row">
-          <div class="subj-name">Physics</div>
-          <div class="bar-track"><div class="bar-fill" id="syl-phy" style="background:var(--accent);width:0%"></div></div>
-          <div class="bar-pct" id="sylp-phy">0%</div>
-        </div>
-        <div class="subj-row">
-          <div class="subj-name">Chemistry</div>
-          <div class="bar-track"><div class="bar-fill" id="syl-che" style="background:var(--rose);width:0%"></div></div>
-          <div class="bar-pct" id="sylp-che">0%</div>
-        </div>
-        <div class="subj-row">
-          <div class="subj-name">Maths</div>
-          <div class="bar-track"><div class="bar-fill" id="syl-mat" style="background:var(--mint);width:0%"></div></div>
-          <div class="bar-pct" id="sylp-mat">0%</div>
-        </div>
-      </div>
+    <div class="stat-card sc-mint">
+      <div class="stat-label">This Week</div>
+      <div class="stat-value sv-mint" id="ov-week">0h</div>
+      <div class="stat-sub">of 35h goal</div>
     </div>
-    <div class="card">
-      <div class="card-title"><span class="live-dot"></span>Recent Sessions</div>
-      <div id="recent-list"><div style="color:var(--muted);font-size:12px">No sessions yet. Go log one.</div></div>
+    <div class="stat-card sc-amber">
+      <div class="stat-label">Streak</div>
+      <div class="stat-value sv-amber" id="ov-streak">0 🔥</div>
+      <div class="stat-sub" id="streak-sub">days</div>
+    </div>
+    <div class="stat-card sc-rose">
+      <div class="stat-label">Best Mock</div>
+      <div class="stat-value sv-rose" id="ov-best">—</div>
+      <div class="stat-sub">out of 300</div>
     </div>
   </div>
 
-  <!-- LOG SESSION -->
-  <div class="page" id="page-log">
-    <div class="page-title">Log Session</div>
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Subject Split (All Time)</div>
+      <div class="subj-row">
+        <div class="subj-name">⚡ Physics</div>
+        <div class="bar-track"><div class="bar-fill" id="bar-phy" style="background:var(--accent2);width:0%"></div></div>
+        <div class="bar-pct" id="pct-phy">0%</div>
+      </div>
+      <div class="subj-row">
+        <div class="subj-name">🧪 Chemistry</div>
+        <div class="bar-track"><div class="bar-fill" id="bar-che" style="background:var(--rose);width:0%"></div></div>
+        <div class="bar-pct" id="pct-che">0%</div>
+      </div>
+      <div class="subj-row">
+        <div class="subj-name">∑ Maths</div>
+        <div class="bar-track"><div class="bar-fill" id="bar-mat" style="background:var(--mint);width:0%"></div></div>
+        <div class="bar-pct" id="pct-mat">0%</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Syllabus Progress</div>
+      <div class="subj-row">
+        <div class="subj-name">⚡ Physics</div>
+        <div class="bar-track"><div class="bar-fill" id="syl-phy" style="background:var(--accent2);width:0%"></div></div>
+        <div class="bar-pct" id="sylp-phy">0%</div>
+      </div>
+      <div class="subj-row">
+        <div class="subj-name">🧪 Chemistry</div>
+        <div class="bar-track"><div class="bar-fill" id="syl-che" style="background:var(--rose);width:0%"></div></div>
+        <div class="bar-pct" id="sylp-che">0%</div>
+      </div>
+      <div class="subj-row">
+        <div class="subj-name">∑ Maths</div>
+        <div class="bar-track"><div class="bar-fill" id="syl-mat" style="background:var(--mint);width:0%"></div></div>
+        <div class="bar-pct" id="sylp-mat">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card mb16">
+    <div class="card-title">This Week</div>
+    <div class="week-chart" id="week-chart"></div>
+    <div style="display:flex;gap:6px;margin-top:6px" id="week-labels"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><span class="live-dot" style="margin-right:6px"></span>Recent Sessions</div>
+    <div id="recent-list">
+      <div class="empty-state">
+        <div class="empty-state-icon">📝</div>
+        <div class="empty-state-text">No sessions yet. Go log one!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LOG SESSION -->
+<div class="page" id="page-log">
+  <div class="page-header">
+    <div class="page-title">Log <span>Session</span></div>
     <div class="page-sub" id="log-date-sub"></div>
-    <div class="grid2">
-      <div class="card">
-        <div class="card-title">Today's Hours</div>
-        <div class="slider-wrap">
-          <div class="slider-label"><span class="slider-name">⚡ Physics</span><span class="slider-val" id="vl-phy">0.0h</span></div>
-          <input type="range" min="0" max="6" step="0.5" value="0" id="sl-phy" oninput="updSlider('phy')">
+  </div>
+
+  <div class="action-bar">
+    <button class="action-btn" onclick="exportData()">↓ Export Backup</button>
+    <label class="action-btn" style="cursor:pointer">
+      ↑ Import Backup
+      <input type="file" accept=".json" style="display:none" onchange="importData(event)">
+    </label>
+    <button class="action-btn" onclick="if(confirm('Clear ALL data? This cannot be undone.'))clearAll()">⚠ Reset All Data</button>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Hours Logged Today</div>
+      <div class="slider-wrap">
+        <div class="slider-label">
+          <span class="slider-name">⚡ Physics</span>
+          <span class="slider-val sv-p" id="vl-phy">0.0h</span>
         </div>
-        <div class="slider-wrap">
-          <div class="slider-label"><span class="slider-name">🧪 Chemistry</span><span class="slider-val" id="vl-che">0.0h</span></div>
-          <input type="range" min="0" max="6" step="0.5" value="0" id="sl-che" oninput="updSlider('che')">
-        </div>
-        <div class="slider-wrap">
-          <div class="slider-label"><span class="slider-name">∑ Maths</span><span class="slider-val" id="vl-mat">0.0h</span></div>
-          <input type="range" min="0" max="6" step="0.5" value="0" id="sl-mat" oninput="updSlider('mat')">
-        </div>
-        <div class="session-total">
-          <span class="total-label">Session Total</span>
-          <span class="total-val" id="total-today">0.0h</span>
-        </div>
-        <button class="log-btn" onclick="logSession()">Save Session ✓</button>
+        <input type="range" class="range-phy" min="0" max="8" step="0.5" value="0" id="sl-phy" oninput="updSlider('phy')">
       </div>
-      <div class="card">
-        <div class="card-title">Session History</div>
-        <div id="sessions-list"><div style="color:var(--muted);font-size:12px">Nothing logged yet.</div></div>
+      <div class="slider-wrap">
+        <div class="slider-label">
+          <span class="slider-name">🧪 Chemistry</span>
+          <span class="slider-val sv-c" id="vl-che">0.0h</span>
+        </div>
+        <input type="range" class="range-che" min="0" max="8" step="0.5" value="0" id="sl-che" oninput="updSlider('che')">
+      </div>
+      <div class="slider-wrap">
+        <div class="slider-label">
+          <span class="slider-name">∑ Maths</span>
+          <span class="slider-val sv-m" id="vl-mat">0.0h</span>
+        </div>
+        <input type="range" class="range-mat" min="0" max="8" step="0.5" value="0" id="sl-mat" oninput="updSlider('mat')">
+      </div>
+      <div class="session-total">
+        <span class="total-label">Session Total</span>
+        <span class="total-val" id="total-today">0.0h</span>
+      </div>
+      <button class="log-btn" onclick="logSession()">Save Session ✓</button>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Session History</div>
+      <div id="sessions-list">
+        <div class="empty-state">
+          <div class="empty-state-icon">🗒</div>
+          <div class="empty-state-text">Nothing logged yet.</div>
+        </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- YEAR CALENDAR -->
-  <div class="page" id="page-calendar">
-    <div class="page-title">Year Calendar</div>
+<!-- POMODORO -->
+<div class="page" id="page-pomodoro">
+  <div class="page-header">
+    <div class="page-title">Focus <span>Timer</span></div>
+    <div class="page-sub">Deep work. No distractions.</div>
+  </div>
+
+  <div class="g13">
+    <div class="card" style="text-align:center">
+      <div class="card-title" style="justify-content:center">Pomodoro</div>
+      <div class="pomo-ring" onclick="togglePomo()">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <circle class="pomo-ring-track" cx="100" cy="100" r="90"/>
+          <circle class="pomo-ring-fill" id="pomo-ring-fill" cx="100" cy="100" r="90" stroke="var(--accent2)"/>
+        </svg>
+        <div class="pomo-center">
+          <div class="pomo-time" id="pomo-time">25:00</div>
+          <div class="pomo-mode" id="pomo-mode">focus</div>
+        </div>
+      </div>
+
+      <div class="pomo-btns">
+        <button class="pomo-btn primary" id="pomo-start-btn" onclick="togglePomo()">Start</button>
+        <button class="pomo-btn" onclick="resetPomo()">Reset</button>
+        <button class="pomo-btn" onclick="skipPomo()">Skip</button>
+      </div>
+
+      <div class="pomo-presets">
+        <button class="pomo-preset active" onclick="setPomoPreset(25,5,'Classic',this)">25/5</button>
+        <button class="pomo-preset" onclick="setPomoPreset(50,10,'Deep Work',this)">50/10</button>
+        <button class="pomo-preset" onclick="setPomoPreset(90,15,'Flow State',this)">90/15</button>
+        <button class="pomo-preset" onclick="setPomoPreset(15,5,'Quick',this)">15/5</button>
+      </div>
+
+      <div class="pomo-sessions" id="pomo-dots"></div>
+
+      <div style="margin-top:18px;font-size:12px;color:var(--muted);text-align:center" id="pomo-subject-display">
+        Subject: <span style="color:var(--accent2)" id="pomo-subj-label">—</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Current Focus Subject</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px">
+        <div class="topic-item" id="pomo-sel-phy" onclick="setPomoSubject('phy')" style="cursor:pointer">
+          <div style="width:10px;height:10px;border-radius:50%;background:var(--accent2);flex-shrink:0"></div>
+          <div class="topic-name" style="font-size:13px;font-weight:500">⚡ Physics</div>
+        </div>
+        <div class="topic-item" id="pomo-sel-che" onclick="setPomoSubject('che')" style="cursor:pointer">
+          <div style="width:10px;height:10px;border-radius:50%;background:var(--rose);flex-shrink:0"></div>
+          <div class="topic-name" style="font-size:13px;font-weight:500">🧪 Chemistry</div>
+        </div>
+        <div class="topic-item" id="pomo-sel-mat" onclick="setPomoSubject('mat')" style="cursor:pointer">
+          <div style="width:10px;height:10px;border-radius:50%;background:var(--mint);flex-shrink:0"></div>
+          <div class="topic-name" style="font-size:13px;font-weight:500">∑ Maths</div>
+        </div>
+      </div>
+
+      <div class="card-title" style="margin-top:8px">Today's Pomodoros</div>
+      <div id="pomo-log" style="font-size:12px;color:var(--muted)">No sessions yet today.</div>
+
+      <div style="margin-top:20px">
+        <div class="card-title">Focus Tips</div>
+        <div style="font-size:12px;color:var(--muted2);line-height:2" id="focus-tip"></div>
+      </div>
+
+      <button class="log-btn" style="margin-top:16px" onclick="openFocus()">🎯 Enter Full Focus Mode</button>
+    </div>
+  </div>
+</div>
+
+<!-- CALENDAR -->
+<div class="page" id="page-calendar">
+  <div class="page-header">
+    <div class="page-title">Year <span>Calendar</span></div>
     <div class="page-sub">Every green cell is a win. Fill the year.</div>
-    <div style="display:flex;gap:12px;align-items:center;margin-bottom:20px;flex-wrap:wrap">
-      <span class="badge badge-mint">■ Studied</span>
-      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)"><span style="width:12px;height:12px;background:var(--accent);border-radius:2px;display:inline-block"></span>Today</span>
-      <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)"><span style="width:12px;height:12px;background:var(--s3);border-radius:2px;display:inline-block"></span>Not studied</span>
-      <span class="badge badge-acc" id="total-days-studied">0 days studied</span>
-    </div>
-    <div class="year-grid" id="year-calendar"></div>
   </div>
 
-  <!-- SYLLABUS -->
-  <div class="page" id="page-syllabus">
-    <div class="page-title">Syllabus Tracker</div>
+  <div class="legend-row">
+    <div class="legend-item"><div class="legend-box" style="background:var(--mint)"></div> Studied (2h+)</div>
+    <div class="legend-item"><div class="legend-box" style="background:rgba(16,217,160,0.4)"></div> Light (&lt;2h)</div>
+    <div class="legend-item"><div class="legend-box" style="background:var(--accent2)"></div> Today</div>
+    <div class="legend-item"><div class="legend-box" style="background:var(--s2);border:1px solid var(--border2)"></div> Not studied</div>
+    <span class="badge b-mint" id="total-days-studied">0 days studied</span>
+    <span class="badge b-amber" id="total-days-studied-hrs"></span>
+  </div>
+  <div class="year-grid" id="year-calendar"></div>
+</div>
+
+<!-- SYLLABUS -->
+<div class="page" id="page-syllabus">
+  <div class="page-header">
+    <div class="page-title">Syllabus <span>Tracker</span></div>
     <div class="page-sub">Tick topics as you finish them. No mercy till all green.</div>
-    <div id="syllabus-content"></div>
   </div>
 
-  <!-- MOCK TESTS -->
-  <div class="page" id="page-mocks">
-    <div class="page-title">Mock Tests</div>
+  <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap">
+    <button class="action-btn" onclick="filterTopics('all')">All</button>
+    <button class="action-btn" onclick="filterTopics('done')">✓ Done only</button>
+    <button class="action-btn" onclick="filterTopics('pending')">○ Pending only</button>
+  </div>
+
+  <div id="syllabus-content"></div>
+</div>
+
+<!-- MOCKS -->
+<div class="page" id="page-mocks">
+  <div class="page-header">
+    <div class="page-title">Mock <span>Tests</span></div>
     <div class="page-sub">Track every attempt. Watch the line go up.</div>
-    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr)">
-      <div class="stat-card"><div class="stat-label">TOTAL MOCKS</div><div class="stat-value stat-accent" id="mk-count">0</div></div>
-      <div class="stat-card"><div class="stat-label">AVERAGE</div><div class="stat-value stat-amber" id="mk-avg">—</div><div class="stat-sub">/300</div></div>
-      <div class="stat-card"><div class="stat-label">BEST</div><div class="stat-value stat-mint" id="mk-best">—</div><div class="stat-sub">/300</div></div>
+  </div>
+
+  <div class="stat-grid" style="grid-template-columns:repeat(4,1fr)">
+    <div class="stat-card sc-accent"><div class="stat-label">Total Mocks</div><div class="stat-value sv-accent" id="mk-count">0</div></div>
+    <div class="stat-card sc-amber"><div class="stat-label">Average</div><div class="stat-value sv-amber" id="mk-avg">—</div><div class="stat-sub">/300</div></div>
+    <div class="stat-card sc-mint"><div class="stat-label">Best</div><div class="stat-value sv-mint" id="mk-best">—</div><div class="stat-sub">/300</div></div>
+    <div class="stat-card sc-rose"><div class="stat-label">Trend</div><div class="stat-value sv-rose" id="mk-trend">—</div><div class="stat-sub">last 3 mocks</div></div>
+  </div>
+
+  <div class="card mb16">
+    <div class="card-title">Score Trend</div>
+    <div style="position:relative;width:100%;height:220px"><canvas id="mock-chart"></canvas></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">All Attempts</div>
+    <div id="mock-list">
+      <div class="empty-state">
+        <div class="empty-state-icon">📊</div>
+        <div class="empty-state-text">No mocks logged yet.</div>
+      </div>
     </div>
-    <div class="card mb16">
-      <div class="card-title">Score Trend</div>
-      <div style="position:relative;width:100%;height:220px"><canvas id="mock-chart"></canvas></div>
+    <div style="display:flex;gap:10px;align-items:flex-end;margin-top:18px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px;letter-spacing:1px">SCORE (0-300)</div>
+        <input class="score-inp" type="number" id="new-score" placeholder="e.g. 178" min="0" max="300" style="width:130px">
+      </div>
+      <div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:4px;letter-spacing:1px">LABEL</div>
+        <input class="score-inp" type="text" id="new-label" placeholder="e.g. PW Full Test #3" style="width:200px">
+      </div>
+      <button class="add-btn" onclick="addMock()">+ Add Mock</button>
+    </div>
+  </div>
+</div>
+
+<!-- ANALYTICS -->
+<div class="page" id="page-analytics">
+  <div class="page-header">
+    <div class="page-title">Analytics <span>Deep Dive</span></div>
+    <div class="page-sub">Patterns, insights, and where your time actually goes.</div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat-card sc-accent"><div class="stat-label">Total Hours</div><div class="stat-value sv-accent" id="an-total">0h</div></div>
+    <div class="stat-card sc-mint"><div class="stat-label">Days Studied</div><div class="stat-value sv-mint" id="an-days">0</div></div>
+    <div class="stat-card sc-amber"><div class="stat-label">Daily Avg</div><div class="stat-value sv-amber" id="an-avg">0h</div></div>
+    <div class="stat-card sc-rose"><div class="stat-label">Best Day</div><div class="stat-value sv-rose" id="an-best">0h</div></div>
+  </div>
+
+  <div class="insights-grid" id="insights-grid"></div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">30-Day Trend</div>
+      <div style="position:relative;height:160px"><canvas id="trend-chart"></canvas></div>
     </div>
     <div class="card">
-      <div class="card-title">All Attempts</div>
-      <div id="mock-list"><div style="color:var(--muted);font-size:12px">No mocks logged yet.</div></div>
-      <div class="score-entry">
-        <input class="score-inp" type="number" id="new-score" placeholder="Score (0-300)" min="0" max="300">
-        <input class="score-inp" style="width:130px" type="text" id="new-label" placeholder="Label (e.g. PW #3)">
-        <button class="add-btn" onclick="addMock()">+ Add</button>
-      </div>
+      <div class="card-title">Subject Balance</div>
+      <div style="position:relative;height:160px"><canvas id="pie-chart"></canvas></div>
     </div>
   </div>
+
+  <div class="card">
+    <div class="card-title">Monthly Summary</div>
+    <div id="monthly-summary"></div>
+  </div>
+</div>
 
 </div><!-- /main -->
 </div><!-- /app -->
 
-<script>
-// ─── STORAGE ───────────────────────────────
-const K=k=>JSON.parse(localStorage.getItem('jee2027_'+k)||'null');
-const W=(k,v)=>localStorage.setItem('jee2027_'+k,JSON.stringify(v));
+<!-- FOCUS OVERLAY -->
+<div class="focus-overlay" id="focus-overlay">
+  <button class="focus-close" onclick="closeFocus()">✕ Close</button>
+  <div class="focus-label">Deep Focus Mode</div>
+  <div class="focus-time" id="focus-time-display">25:00</div>
+  <div class="focus-subject" id="focus-subject-label">Physics</div>
+  <div style="display:flex;gap:10px;margin-top:28px">
+    <button class="pomo-btn primary" style="min-width:100px" onclick="togglePomo()">Pause</button>
+    <button class="pomo-btn" onclick="closeFocus()">Back</button>
+  </div>
+</div>
 
-// ─── DATA ──────────────────────────────────
-const TOPICS={
-  phy:['Kinematics','Laws of Motion','Work & Energy','Rotational Motion','Gravitation','Fluid Mechanics','Thermal Properties','Thermodynamics','Kinetic Theory','Oscillations','Waves','Electrostatics','Current Electricity','Moving Charges','Magnetism','EMI & AC','EM Waves','Ray Optics','Wave Optics','Dual Nature','Atoms & Nuclei','Semiconductors','Communication Systems'],
-  che:['Basic Concepts','Structure of Atom','Periodic Table','Chemical Bonding','States of Matter','Thermodynamics','Equilibrium','Redox Reactions','Hydrogen','s-Block','p-Block (11)','Organics Basics','Hydrocarbons','Environmental Chem','Solid State','Solutions','Electrochemistry','Chemical Kinetics','Surface Chem','p-Block (12)','d & f Block','Coordination','Haloarenes','Alcohols & Ethers','Aldehydes & Ketones','Carboxylic Acids','Amines','Biomolecules','Polymers','Everyday Chemistry'],
-  mat:['Sets & Relations','Complex Numbers','Sequences & Series','Quadratic Equations','Permutations','Binomial Theorem','Matrices','Determinants','Limits','Continuity','Derivatives','Applications of Derivatives','Integrals','Definite Integrals','Differential Equations','Straight Lines','Circles','Conic Sections','Vectors','3D Geometry','Linear Programming','Probability','Statistics','Trigonometry','Inverse Trig','Mathematical Reasoning']
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toast-icon">✓</span>
+  <span class="toast-msg" id="toast-msg"></span>
+  <span class="toast-close" onclick="hideToast()">✕</span>
+</div>
+
+<script>
+// ─── STORAGE ───────────────────────────────────────────────────────────────
+const K = k => { try { return JSON.parse(localStorage.getItem('jee2027_' + k) || 'null'); } catch(e) { return null; } };
+const W = (k, v) => localStorage.setItem('jee2027_' + k, JSON.stringify(v));
+
+// ─── DATA ──────────────────────────────────────────────────────────────────
+const TOPICS = {
+  phy: ['Kinematics','Laws of Motion','Work & Energy','Rotational Motion','Gravitation','Fluid Mechanics','Thermal Properties','Thermodynamics','Kinetic Theory','Oscillations','Waves','Electrostatics','Current Electricity','Moving Charges & Magnetism','Electromagnetic Induction','AC Circuits','EM Waves','Ray Optics','Wave Optics','Dual Nature of Radiation','Atoms & Nuclei','Semiconductors','Communication Systems'],
+  che: ['Basic Concepts of Chemistry','Structure of Atom','Periodic Table','Chemical Bonding','States of Matter','Thermodynamics','Equilibrium','Redox Reactions','Hydrogen','s-Block Elements','p-Block (11th)','Organics Basics','Hydrocarbons','Environmental Chemistry','Solid State','Solutions','Electrochemistry','Chemical Kinetics','Surface Chemistry','p-Block (12th)','d & f Block','Coordination Compounds','Haloalkanes & Haloarenes','Alcohols & Ethers','Aldehydes & Ketones','Carboxylic Acids','Amines','Biomolecules','Polymers','Chemistry in Everyday Life'],
+  mat: ['Sets & Relations','Complex Numbers','Sequences & Series','Quadratic Equations','Permutations & Combinations','Binomial Theorem','Matrices','Determinants','Limits','Continuity & Differentiability','Derivatives','Applications of Derivatives','Integrals','Definite Integrals & Area','Differential Equations','Straight Lines','Circles','Conic Sections','Vectors','3D Geometry','Linear Programming','Probability','Statistics','Trigonometric Functions','Inverse Trigonometry','Mathematical Reasoning']
 };
 
-const QUOTES=[
+const QUOTES = [
   "MNNIT Allahabad CSE. EWS seat. Your name on it.",
   "The grind you put in today is the gap you close tomorrow.",
   "Every hour logged here is one step closer to NIT.",
@@ -499,51 +1032,100 @@ const QUOTES=[
   "Aizen played the long game. So do you.",
   "January 2027 is coming whether you study or not.",
   "Elite performance is just accumulated ordinary days.",
-  "You cleared compartment in 4 days flat. You already know what you're capable of."
+  "You cleared compartment in 4 days flat. You already know what you're capable of.",
+  "Sleep is strategy. Eat well. Study hard. Repeat.",
+  "The difference between you and the rank 1 is just one year of obsession.",
+  "Every topic you check off is one less thing standing between you and that gate.",
+  "Hard days are the ones that matter most. Show up anyway.",
+  "MNNIT 2027. Visualize it. Then work backwards from it.",
 ];
 
-// ─── NAVIGATION ────────────────────────────
-function goTo(page){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById('page-'+page).classList.add('active');
-  const navItems=document.querySelectorAll('.nav-item');
-  const pages=['overview','log','calendar','syllabus','mocks'];
+const FOCUS_TIPS = [
+  "Put your phone in another room. Physically.",
+  "Every 25 mins of focus = 1 step closer to the seat.",
+  "Don't multitask. Physics is Physics. Give it 100%.",
+  "If your mind wanders, write the distraction down and return.",
+  "A clean desk is a focused mind.",
+  "Close all tabs except what you need right now.",
+  "Silence notifications. You are not available right now.",
+];
+
+// ─── TOAST ─────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, icon='✓', dur=3000) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  document.getElementById('toast-icon').textContent = icon;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(hideToast, dur);
+}
+function hideToast() {
+  document.getElementById('toast').classList.remove('show');
+}
+
+// ─── NAVIGATION ────────────────────────────────────────────────────────────
+function goTo(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  const pages = ['overview','log','pomodoro','calendar','syllabus','mocks','analytics'];
+  const navItems = document.querySelectorAll('.nav-item');
   navItems[pages.indexOf(page)]?.classList.add('active');
-  if(page==='overview')renderOverview();
-  if(page==='log')renderSessions();
-  if(page==='calendar')renderCalendar();
-  if(page==='syllabus')renderSyllabus();
-  if(page==='mocks'){renderMockList();setTimeout(renderMockChart,80);}
+  if (page === 'overview') renderOverview();
+  if (page === 'log') renderSessions();
+  if (page === 'calendar') renderCalendar();
+  if (page === 'syllabus') renderSyllabus();
+  if (page === 'mocks') { renderMockList(); setTimeout(renderMockChart, 80); }
+  if (page === 'analytics') setTimeout(renderAnalytics, 80);
 }
 
-// ─── DATE HELPERS ──────────────────────────
-function dateKey(d){
-  d=d||new Date();
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+// ─── DATE HELPERS ──────────────────────────────────────────────────────────
+function dateKey(d) {
+  d = d || new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
 }
-function fmtDate(d){
-  return d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'});
-}
-function fmtShort(d){
-  return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+function fmtDate(d) { return d.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short',year:'numeric'}); }
+function fmtShort(d) { return d.toLocaleDateString('en-IN',{day:'numeric',month:'short'}); }
+
+// ─── STREAK (FIXED) ────────────────────────────────────────────────────────
+function calcStreak() {
+  const sessions = K('sessions') || [];
+  const allKeys = new Set(sessions.map(s => s.key));
+  const today = new Date();
+  let streak = 0;
+  for (let i = 0; i < 365; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() - i);
+    if (allKeys.has(dateKey(d))) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  return streak;
 }
 
-// ─── INIT ──────────────────────────────────
-function init(){
-  const now=new Date();
-  const jee=new Date('2027-01-15');
-  const start=new Date('2026-04-01');
-  const total=Math.ceil((jee-start)/(864e5));
-  const elapsed=Math.ceil((now-start)/(864e5));
-  const days=Math.ceil((jee-now)/(864e5));
-  document.getElementById('days-count').textContent=Math.max(0,days);
-  document.getElementById('prog-fill').style.width=Math.min(100,Math.round(elapsed/total*100))+'%';
-  document.getElementById('today-str').textContent=fmtDate(now);
-  document.getElementById('log-date-sub').textContent='Logging for '+fmtDate(now);
-  document.getElementById('ov-sub').textContent=fmtDate(now);
-  document.getElementById('today-chip').innerHTML=fmtDate(now)+'<br><span style="color:var(--accent)">'+(Math.max(0,days))+' days left</span>';
-  document.getElementById('quote-box').textContent=QUOTES[Math.floor(Math.random()*QUOTES.length)];
+// ─── INIT ──────────────────────────────────────────────────────────────────
+function init() {
+  const now = new Date();
+  const jee = new Date('2027-01-15');
+  const start = new Date('2026-04-01');
+  const total = Math.ceil((jee - start) / 864e5);
+  const elapsed = Math.ceil((now - start) / 864e5);
+  const days = Math.ceil((jee - now) / 864e5);
+
+  document.getElementById('days-count').textContent = Math.max(0, days);
+  document.getElementById('prog-fill').style.width = Math.min(100, Math.round(elapsed/total*100)) + '%';
+  document.getElementById('today-str').textContent = fmtDate(now);
+  document.getElementById('log-date-sub').textContent = 'Logging for ' + fmtDate(now);
+  document.getElementById('ov-sub').textContent = fmtDate(now);
+  document.getElementById('quote-text').textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+  document.getElementById('focus-tip').innerHTML = FOCUS_TIPS[Math.floor(Math.random() * FOCUS_TIPS.length)];
+
+  updateSliderBg('phy', 0); updateSliderBg('che', 0); updateSliderBg('mat', 0);
+  initPomo();
+  renderPomoDots();
   renderOverview();
   renderSessions();
   renderSyllabus();
@@ -551,269 +1133,747 @@ function init(){
   renderMockList();
 }
 
-// ─── SLIDERS ───────────────────────────────
-function updSlider(s){
-  const v=parseFloat(document.getElementById('sl-'+s).value);
-  document.getElementById('vl-'+s).textContent=v.toFixed(1)+'h';
-  const t=parseFloat(document.getElementById('sl-phy').value)+parseFloat(document.getElementById('sl-che').value)+parseFloat(document.getElementById('sl-mat').value);
-  document.getElementById('total-today').textContent=t.toFixed(1)+'h';
+function refreshQuote() {
+  const el = document.getElementById('quote-text');
+  el.style.opacity = '0';
+  setTimeout(() => {
+    el.textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+    el.style.transition = 'opacity .3s';
+    el.style.opacity = '1';
+  }, 200);
 }
 
-// ─── LOG SESSION ───────────────────────────
-function logSession(){
-  const phy=parseFloat(document.getElementById('sl-phy').value);
-  const che=parseFloat(document.getElementById('sl-che').value);
-  const mat=parseFloat(document.getElementById('sl-mat').value);
-  if(phy+che+mat===0){alert('Log at least some hours!');return;}
-  const sessions=K('sessions')||[];
-  const key=dateKey();
-  const existing=sessions.findIndex(s=>s.key===key);
-  if(existing>-1){
-    sessions[existing].phy+=phy;sessions[existing].che+=che;sessions[existing].mat+=mat;
-    sessions[existing].total=+(sessions[existing].phy+sessions[existing].che+sessions[existing].mat).toFixed(1);
+// ─── SLIDERS ───────────────────────────────────────────────────────────────
+function updateSliderBg(s, v) {
+  const max = 8;
+  const pct = Math.round((v / max) * 100);
+  document.getElementById('sl-' + s).style.setProperty('--pct', pct + '%');
+}
+
+function updSlider(s) {
+  const v = parseFloat(document.getElementById('sl-' + s).value);
+  document.getElementById('vl-' + s).textContent = v.toFixed(1) + 'h';
+  updateSliderBg(s, v);
+  const t = parseFloat(document.getElementById('sl-phy').value)
+          + parseFloat(document.getElementById('sl-che').value)
+          + parseFloat(document.getElementById('sl-mat').value);
+  document.getElementById('total-today').textContent = t.toFixed(1) + 'h';
+}
+
+// ─── LOG SESSION ───────────────────────────────────────────────────────────
+function logSession() {
+  const phy = parseFloat(document.getElementById('sl-phy').value);
+  const che = parseFloat(document.getElementById('sl-che').value);
+  const mat = parseFloat(document.getElementById('sl-mat').value);
+  if (phy + che + mat === 0) { showToast('Log at least 0.5h in any subject!', '⚠'); return; }
+  const sessions = K('sessions') || [];
+  const key = dateKey();
+  const existing = sessions.findIndex(s => s.key === key);
+  if (existing > -1) {
+    sessions[existing].phy = +(sessions[existing].phy + phy).toFixed(1);
+    sessions[existing].che = +(sessions[existing].che + che).toFixed(1);
+    sessions[existing].mat = +(sessions[existing].mat + mat).toFixed(1);
+    sessions[existing].total = +(sessions[existing].phy + sessions[existing].che + sessions[existing].mat).toFixed(1);
   } else {
-    sessions.unshift({key,date:fmtShort(new Date()),phy,che,mat,total:+(phy+che+mat).toFixed(1)});
+    sessions.unshift({ key, date: fmtShort(new Date()), phy, che, mat, total: +(phy+che+mat).toFixed(1) });
   }
-  W('sessions',sessions);
-  ['phy','che','mat'].forEach(s=>{document.getElementById('sl-'+s).value=0;updSlider(s);});
+  W('sessions', sessions);
+  ['phy','che','mat'].forEach(s => { document.getElementById('sl-'+s).value = 0; updSlider(s); });
   renderSessions();
   renderOverview();
+  const total = phy + che + mat;
+  showToast(`${total.toFixed(1)}h logged! Keep going.`, '⚡');
 }
 
-// ─── SESSIONS LIST ─────────────────────────
-function renderSessions(){
-  const sessions=K('sessions')||[];
-  const el=document.getElementById('sessions-list');
-  if(!sessions.length){el.innerHTML='<div style="color:var(--muted);font-size:12px">Nothing logged yet.</div>';return;}
-  el.innerHTML=sessions.slice(0,12).map(s=>`
+// ─── SESSIONS LIST ─────────────────────────────────────────────────────────
+function renderSessions() {
+  const sessions = K('sessions') || [];
+  const el = document.getElementById('sessions-list');
+  if (!sessions.length) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🗒</div><div class="empty-state-text">Nothing logged yet.</div></div>`;
+    return;
+  }
+  el.innerHTML = sessions.slice(0, 14).map(s => `
     <div class="session-item">
       <div class="sess-date">${s.date}</div>
       <div class="sess-pills">
-        <span class="pill pill-phy">P:${s.phy}h</span>
-        <span class="pill pill-che">C:${s.che}h</span>
-        <span class="pill pill-mat">M:${s.mat}h</span>
+        ${s.phy > 0 ? `<span class="pill pill-p">P:${s.phy}h</span>` : ''}
+        ${s.che > 0 ? `<span class="pill pill-c">C:${s.che}h</span>` : ''}
+        ${s.mat > 0 ? `<span class="pill pill-m">M:${s.mat}h</span>` : ''}
       </div>
-      <div class="sess-total">${s.total}h</div>
+      <div class="sess-total sv-mint">${s.total}h</div>
     </div>`).join('');
 }
 
-// ─── OVERVIEW ──────────────────────────────
-function renderOverview(){
-  const sessions=K('sessions')||[];
-  const todayKey=dateKey();
-  const todayS=sessions.filter(s=>s.key===todayKey);
-  const todayH=todayS.reduce((a,s)=>a+s.total,0);
-  document.getElementById('ov-today').textContent=todayH.toFixed(1)+'h';
-
-  const now=new Date();
-  const weekStart=new Date(now);weekStart.setDate(now.getDate()-now.getDay());
-  const weekKeys=[];
-  for(let i=0;i<7;i++){const d=new Date(weekStart);d.setDate(weekStart.getDate()+i);weekKeys.push(dateKey(d));}
-  const weekH=sessions.filter(s=>weekKeys.includes(s.key)).reduce((a,s)=>a+s.total,0);
-  document.getElementById('ov-week').textContent=weekH.toFixed(1)+'h';
-
-  const uniqueDays=new Set(sessions.map(s=>s.key)).size;
-  let streak=0;
-  const allKeys=[...new Set(sessions.map(s=>s.key))].sort().reverse();
-  for(let i=0;i<allKeys.length;i++){
-    const d=new Date(allKeys[i]);const prev=new Date();prev.setDate(prev.getDate()-i);
-    if(dateKey(d)===dateKey(prev))streak++;else break;
+// ─── WEEK CHART ────────────────────────────────────────────────────────────
+function renderWeekChart() {
+  const sessions = K('sessions') || [];
+  const keyMap = {};
+  sessions.forEach(s => { keyMap[s.key] = (keyMap[s.key] || 0) + s.total; });
+  const now = new Date();
+  const dayLabels = ['Su','Mo','Tu','We','Th','Fr','Sa'];
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now); d.setDate(now.getDate() - i);
+    days.push({ key: dateKey(d), label: dayLabels[d.getDay()], isToday: i===0, hrs: keyMap[dateKey(d)] || 0 });
   }
-  document.getElementById('ov-streak').textContent=streak;
+  const max = Math.max(...days.map(d => d.hrs), 1);
+  const chartEl = document.getElementById('week-chart');
+  const labelsEl = document.getElementById('week-labels');
+  chartEl.innerHTML = days.map(d => {
+    const h = Math.round((d.hrs / max) * 80);
+    return `<div class="week-bar-wrap">
+      <div class="week-bar" style="height:${Math.max(h,2)}px;${d.isToday?'background:linear-gradient(180deg,var(--mint),rgba(16,217,160,0.3))':''}">
+        <div class="week-bar-tooltip">${d.hrs}h</div>
+      </div>
+    </div>`;
+  }).join('');
+  labelsEl.innerHTML = days.map(d => `<div class="week-label${d.isToday?' today':''}" style="flex:1;font-size:9px;color:${d.isToday?'var(--mint)':'var(--muted)'};text-align:center;font-family:'JetBrains Mono',monospace">${d.label}</div>`).join('');
+}
 
-  const totalPhy=sessions.reduce((a,s)=>a+s.phy,0);
-  const totalChe=sessions.reduce((a,s)=>a+s.che,0);
-  const totalMat=sessions.reduce((a,s)=>a+s.mat,0);
-  const tot=totalPhy+totalChe+totalMat||1;
-  const pp=Math.round(totalPhy/tot*100),cp=Math.round(totalChe/tot*100),mp=Math.round(totalMat/tot*100);
-  document.getElementById('bar-phy').style.width=pp+'%';document.getElementById('pct-phy').textContent=pp+'%';
-  document.getElementById('bar-che').style.width=cp+'%';document.getElementById('pct-che').textContent=cp+'%';
-  document.getElementById('bar-mat').style.width=mp+'%';document.getElementById('pct-mat').textContent=mp+'%';
+// ─── OVERVIEW ──────────────────────────────────────────────────────────────
+function renderOverview() {
+  const sessions = K('sessions') || [];
+  const todayKey = dateKey();
+  const todayS = sessions.filter(s => s.key === todayKey);
+  const todayH = todayS.reduce((a, s) => a + s.total, 0);
+  document.getElementById('ov-today').textContent = todayH.toFixed(1) + 'h';
+  document.getElementById('ov-today-sub').textContent = todayH >= 6 ? '🔥 beast mode' : todayH >= 3 ? '💪 great work' : 'keep going';
 
-  ['phy','che','mat'].forEach(s=>{
-    const done=(K('topics_'+s)||[]).length;
-    const total=TOPICS[s].length;
-    const pct=Math.round(done/total*100);
-    document.getElementById('syl-'+s).style.width=pct+'%';
-    document.getElementById('sylp-'+s).textContent=pct+'%';
+  const now = new Date();
+  const weekKeys = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(now); d.setDate(now.getDate() - i);
+    weekKeys.push(dateKey(d));
+  }
+  const weekH = sessions.filter(s => weekKeys.includes(s.key)).reduce((a, s) => a + s.total, 0);
+  document.getElementById('ov-week').textContent = weekH.toFixed(1) + 'h';
+
+  const streak = calcStreak();
+  document.getElementById('ov-streak').textContent = streak + (streak > 0 ? ' 🔥' : '');
+  document.getElementById('sidebar-streak').textContent = streak;
+  document.getElementById('streak-sub').textContent = streak >= 7 ? '🏆 on fire!' : 'days';
+
+  const totalPhy = sessions.reduce((a, s) => a + s.phy, 0);
+  const totalChe = sessions.reduce((a, s) => a + s.che, 0);
+  const totalMat = sessions.reduce((a, s) => a + s.mat, 0);
+  const tot = totalPhy + totalChe + totalMat || 1;
+  const pp = Math.round(totalPhy/tot*100), cp = Math.round(totalChe/tot*100), mp = 100 - pp - cp;
+  document.getElementById('bar-phy').style.width = pp + '%'; document.getElementById('pct-phy').textContent = pp + '%';
+  document.getElementById('bar-che').style.width = cp + '%'; document.getElementById('pct-che').textContent = cp + '%';
+  document.getElementById('bar-mat').style.width = mp + '%'; document.getElementById('pct-mat').textContent = mp + '%';
+
+  ['phy','che','mat'].forEach(s => {
+    const done = (K('topics_' + s) || []).length;
+    const total = TOPICS[s].length;
+    const pct = Math.round(done/total*100);
+    document.getElementById('syl-' + s).style.width = pct + '%';
+    document.getElementById('sylp-' + s).textContent = pct + '%';
   });
 
-  const mocks=K('mocks')||[];
-  const best=mocks.length?Math.max(...mocks.map(m=>m.score)):'—';
-  document.getElementById('ov-best').textContent=best!=='—'?best:'—';
+  const mocks = K('mocks') || [];
+  const best = mocks.length ? Math.max(...mocks.map(m => m.score)) : '—';
+  document.getElementById('ov-best').textContent = best !== '—' ? best : '—';
 
-  const recentEl=document.getElementById('recent-list');
-  if(!sessions.length){recentEl.innerHTML='<div style="color:var(--muted);font-size:12px">No sessions yet. Go log one.</div>';return;}
-  recentEl.innerHTML=sessions.slice(0,5).map(s=>`
+  renderWeekChart();
+
+  const recentEl = document.getElementById('recent-list');
+  if (!sessions.length) {
+    recentEl.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📝</div><div class="empty-state-text">No sessions yet. Go log one!</div></div>`;
+    return;
+  }
+  recentEl.innerHTML = sessions.slice(0, 5).map(s => `
     <div class="session-item">
       <div class="sess-date">${s.date}</div>
       <div class="sess-pills">
-        <span class="pill pill-phy">P:${s.phy}h</span>
-        <span class="pill pill-che">C:${s.che}h</span>
-        <span class="pill pill-mat">M:${s.mat}h</span>
+        ${s.phy > 0 ? `<span class="pill pill-p">P:${s.phy}h</span>` : ''}
+        ${s.che > 0 ? `<span class="pill pill-c">C:${s.che}h</span>` : ''}
+        ${s.mat > 0 ? `<span class="pill pill-m">M:${s.mat}h</span>` : ''}
       </div>
-      <div class="sess-total">${s.total}h</div>
+      <div class="sess-total sv-mint">${s.total}h</div>
     </div>`).join('');
 }
 
-// ─── YEAR CALENDAR ─────────────────────────
-function renderCalendar(){
-  const sessions=K('sessions')||[];
-  const studiedKeys=new Set(sessions.map(s=>s.key));
-  const todayKey=dateKey();
-  const now=new Date();
-  const startYear=2026;
+// ─── YEAR CALENDAR ─────────────────────────────────────────────────────────
+function renderCalendar() {
+  const sessions = K('sessions') || [];
+  const hrsMap = {};
+  sessions.forEach(s => { hrsMap[s.key] = (hrsMap[s.key] || 0) + s.total; });
+  const todayKey = dateKey();
+  const now = new Date();
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const weekdays = ['S','M','T','W','T','F','S'];
+  let html = '';
+  const year = 2026;
+  let totalStudied = 0, totalHrs = 0;
 
-  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const weekdays=['S','M','T','W','T','F','S'];
-
-  let html='';
-  for(let m=0;m<12;m++){
-    const firstDay=new Date(startYear,m,1);
-    const daysInMonth=new Date(startYear,m+1,0).getDate();
-    const startDow=firstDay.getDay();
-    html+=`<div class="month-block">
-      <div class="month-name">${months[m]} ${startYear}</div>
-      <div class="weekday-labels">${weekdays.map(w=>`<div class="wd">${w}</div>`).join('')}</div>
+  for (let m = 0; m < 12; m++) {
+    const firstDay = new Date(year, m, 1);
+    const daysInMonth = new Date(year, m+1, 0).getDate();
+    const startDow = firstDay.getDay();
+    html += `<div class="month-block">
+      <div class="month-name">${months[m]} ${year}</div>
+      <div class="weekday-labels">${weekdays.map(w => `<div class="wd">${w}</div>`).join('')}</div>
       <div class="month-days">`;
-    for(let e=0;e<startDow;e++) html+=`<div class="day-cell empty"></div>`;
-    for(let d=1;d<=daysInMonth;d++){
-      const cellDate=new Date(startYear,m,d);
-      const key=dateKey(cellDate);
-      const isToday=key===todayKey;
-      const studied=studiedKeys.has(key);
-      const isFuture=cellDate>now&&!isToday;
-      let cls='day-cell';
-      if(studied)cls+=' studied';
-      if(isToday)cls+=' today';
-      if(isFuture)cls+=' future';
-      html+=`<div class="${cls}" title="${key}${studied?' ✓':''}">${d}</div>`;
+    for (let e = 0; e < startDow; e++) html += `<div class="day-cell empty"></div>`;
+    for (let d = 1; d <= daysInMonth; d++) {
+      const cellDate = new Date(year, m, d);
+      const key = dateKey(cellDate);
+      const hrs = hrsMap[key] || 0;
+      const isToday = key === todayKey;
+      const isFuture = cellDate > now && !isToday;
+      if (hrs > 0) { totalStudied++; totalHrs += hrs; }
+      let cls = 'day-cell';
+      if (hrs >= 2) cls += ' studied';
+      else if (hrs > 0) cls += ' half';
+      if (isToday) cls += ' today';
+      if (isFuture) cls += ' future';
+      const tip = hrs > 0 ? ` (${hrs}h)` : '';
+      html += `<div class="${cls}" title="${key}${tip}">${d}</div>`;
     }
-    html+=`</div></div>`;
+    html += `</div></div>`;
   }
-  document.getElementById('year-calendar').innerHTML=html;
-  document.getElementById('total-days-studied').textContent=studiedKeys.size+' days studied';
+  document.getElementById('year-calendar').innerHTML = html;
+  document.getElementById('total-days-studied').textContent = `${totalStudied} days studied`;
+  document.getElementById('total-days-studied-hrs').textContent = `${totalHrs.toFixed(0)}h total`;
 }
 
-// ─── SYLLABUS ──────────────────────────────
-function renderSyllabus(){
-  const subjects=[
-    {key:'phy',name:'Physics',color:'var(--accent)'},
-    {key:'che',name:'Chemistry',color:'var(--rose)'},
-    {key:'mat',name:'Mathematics',color:'var(--mint)'}
+// ─── SYLLABUS ──────────────────────────────────────────────────────────────
+let syllabusFilter = 'all';
+function filterTopics(f) {
+  syllabusFilter = f;
+  renderSyllabus();
+}
+
+function renderSyllabus() {
+  const subjects = [
+    {key:'phy',name:'Physics',color:'var(--accent2)',dotColor:'var(--accent2)'},
+    {key:'che',name:'Chemistry',color:'var(--rose)',dotColor:'var(--rose)'},
+    {key:'mat',name:'Mathematics',color:'var(--mint)',dotColor:'var(--mint)'}
   ];
-  let html='';
-  subjects.forEach(sub=>{
-    const done=K('topics_'+sub.key)||[];
-    const pct=Math.round(done.length/TOPICS[sub.key].length*100);
-    html+=`<div class="subject-section card mb16">
+  let html = '';
+  subjects.forEach(sub => {
+    const done = K('topics_' + sub.key) || [];
+    const pct = Math.round(done.length / TOPICS[sub.key].length * 100);
+    let filteredTopics = TOPICS[sub.key];
+    let filteredIndices = TOPICS[sub.key].map((_, i) => i);
+    if (syllabusFilter === 'done') {
+      filteredIndices = filteredIndices.filter(i => done.includes(i));
+    } else if (syllabusFilter === 'pending') {
+      filteredIndices = filteredIndices.filter(i => !done.includes(i));
+    }
+
+    html += `<div class="card subject-section">
       <div class="subject-header">
-        <div class="subject-title" style="color:${sub.color}">${sub.name}</div>
-        <div class="subject-prog">${done.length}/${TOPICS[sub.key].length} topics · ${pct}%</div>
+        <div class="subject-title-wrap">
+          <div class="subject-dot" style="background:${sub.dotColor}"></div>
+          <div class="subject-title" style="color:${sub.color}">${sub.name}</div>
+          <span class="badge b-accent">${done.length}/${TOPICS[sub.key].length} · ${pct}%</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="pomo-btn" style="padding:4px 10px;font-size:10px" onclick="markAll('${sub.key}',true)">Mark All Done</button>
+          <button class="pomo-btn" style="padding:4px 10px;font-size:10px" onclick="markAll('${sub.key}',false)">Clear All</button>
+        </div>
       </div>
-      <div class="prog-strip" style="margin-bottom:14px"><div class="prog-fill" style="width:${pct}%;background:${sub.color}"></div></div>
+      <div class="bar-track" style="height:4px;margin-bottom:14px">
+        <div class="bar-fill" style="width:${pct}%;background:${sub.color}"></div>
+      </div>
       <div class="topics-wrap">`;
-    TOPICS[sub.key].forEach((t,i)=>{
-      const isDone=done.includes(i);
-      html+=`<div class="topic-item ${isDone?'done':''}" onclick="toggleTopic('${sub.key}',${i})">
-        <div class="topic-check">${isDone?'<svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>':''}</div>
+
+    filteredIndices.forEach(i => {
+      const t = TOPICS[sub.key][i];
+      const isDone = done.includes(i);
+      html += `<div class="topic-item ${isDone ? 'done' : ''}" onclick="toggleTopic('${sub.key}',${i})">
+        <div class="topic-check">${isDone ? `<svg width="10" height="10" viewBox="0 0 10 10"><polyline points="1.5,5 4,7.5 8.5,2.5" stroke="#000" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>` : ''}</div>
         <div class="topic-name">${t}</div>
       </div>`;
     });
-    html+=`</div></div>`;
+    if (filteredIndices.length === 0) {
+      html += `<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--muted);font-size:12px">No topics match this filter.</div>`;
+    }
+    html += `</div></div>`;
   });
-  document.getElementById('syllabus-content').innerHTML=html;
+  document.getElementById('syllabus-content').innerHTML = html;
 }
 
-function toggleTopic(key,idx){
-  const done=K('topics_'+key)||[];
-  const i=done.indexOf(idx);
-  if(i>-1)done.splice(i,1);else done.push(idx);
-  W('topics_'+key,done);
+function toggleTopic(key, idx) {
+  const done = K('topics_' + key) || [];
+  const i = done.indexOf(idx);
+  if (i > -1) done.splice(i, 1); else done.push(idx);
+  W('topics_' + key, done);
   renderSyllabus();
   renderOverview();
 }
 
-// ─── MOCK TESTS ────────────────────────────
-let mockChartInst=null;
-function renderMockChart(){
-  const mocks=K('mocks')||[];
-  const ctx=document.getElementById('mock-chart');
-  if(mockChartInst)mockChartInst.destroy();
-  if(!mocks.length)return;
-  mockChartInst=new Chart(ctx,{
-    type:'line',
-    data:{
-      labels:mocks.map((m,i)=>m.label||'M'+(i+1)),
-      datasets:[{
-        label:'Score',data:mocks.map(m=>m.score),
-        borderColor:'#7c5cfc',backgroundColor:'rgba(124,92,252,0.08)',
-        pointBackgroundColor:'#fc5c7d',pointBorderColor:'#fc5c7d',
-        pointRadius:5,tension:0.4,fill:true,borderWidth:2
-      }]
+function markAll(key, allDone) {
+  if (allDone) {
+    W('topics_' + key, TOPICS[key].map((_, i) => i));
+    showToast(`All ${key === 'phy' ? 'Physics' : key === 'che' ? 'Chemistry' : 'Maths'} topics marked done!`, '✓');
+  } else {
+    W('topics_' + key, []);
+    showToast('Topics cleared.', '○');
+  }
+  renderSyllabus();
+  renderOverview();
+}
+
+// ─── MOCK TESTS ────────────────────────────────────────────────────────────
+let mockChartInst = null;
+function renderMockChart() {
+  const mocks = K('mocks') || [];
+  const ctx = document.getElementById('mock-chart');
+  if (mockChartInst) mockChartInst.destroy();
+  if (!mocks.length) return;
+
+  const targetLine = Array(mocks.length).fill(200);
+  mockChartInst = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: mocks.map((m, i) => m.label || 'M' + (i+1)),
+      datasets: [
+        {
+          label: 'Score',
+          data: mocks.map(m => m.score),
+          borderColor: '#a78bfa',
+          backgroundColor: 'rgba(167,139,250,0.08)',
+          pointBackgroundColor: mocks.map(m => m.score >= 200 ? '#10d9a0' : m.score >= 150 ? '#f59e0b' : '#f43f5e'),
+          pointBorderColor: 'transparent',
+          pointRadius: 6,
+          tension: 0.4,
+          fill: true,
+          borderWidth: 2
+        },
+        {
+          label: 'Target (200)',
+          data: targetLine,
+          borderColor: 'rgba(16,217,160,0.3)',
+          borderDash: [5,5],
+          pointRadius: 0,
+          borderWidth: 1,
+          fill: false
+        }
+      ]
     },
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{display:false}},
-      scales:{
-        y:{min:0,max:300,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b6890',font:{size:10},stepSize:50}},
-        x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#6b6890',font:{size:10},maxRotation:45,autoSkip:false}}
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(13,13,36,0.95)',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          titleColor: '#f0eeff',
+          bodyColor: '#9994b8',
+          padding: 10,
+        }
+      },
+      scales: {
+        y: {
+          min: 0, max: 300,
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6b6890', font: { size: 10 }, stepSize: 50 },
+          border: { color: 'transparent' }
+        },
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: '#6b6890', font: { size: 10 }, maxRotation: 45, autoSkip: false },
+          border: { color: 'transparent' }
+        }
       }
     }
   });
 }
 
-function renderMockList(){
-  const mocks=K('mocks')||[];
-  document.getElementById('mk-count').textContent=mocks.length;
-  if(!mocks.length){
-    document.getElementById('mk-avg').textContent='—';
-    document.getElementById('mk-best').textContent='—';
-    document.getElementById('ov-best').textContent='—';
-    document.getElementById('mock-list').innerHTML='<div style="color:var(--muted);font-size:12px">No mocks logged yet.</div>';
+function renderMockList() {
+  const mocks = K('mocks') || [];
+  document.getElementById('mk-count').textContent = mocks.length;
+
+  if (!mocks.length) {
+    document.getElementById('mk-avg').textContent = '—';
+    document.getElementById('mk-best').textContent = '—';
+    document.getElementById('mk-trend').textContent = '—';
+    document.getElementById('ov-best').textContent = '—';
+    document.getElementById('mock-list').innerHTML = `<div class="empty-state"><div class="empty-state-icon">📊</div><div class="empty-state-text">No mocks logged yet. Start now.</div></div>`;
     return;
   }
-  const avg=Math.round(mocks.reduce((a,m)=>a+m.score,0)/mocks.length);
-  const best=Math.max(...mocks.map(m=>m.score));
-  document.getElementById('mk-avg').textContent=avg;
-  document.getElementById('mk-best').textContent=best;
-  document.getElementById('ov-best').textContent=best;
-  const colors=s=>s>=200?'var(--mint)':s>=150?'var(--amber)':'var(--rose)';
-  document.getElementById('mock-list').innerHTML=mocks.map((m,i)=>`
+
+  const avg = Math.round(mocks.reduce((a, m) => a + m.score, 0) / mocks.length);
+  const best = Math.max(...mocks.map(m => m.score));
+  const lastThree = mocks.slice(-3);
+  const trendDir = lastThree.length >= 2
+    ? (lastThree[lastThree.length-1].score > lastThree[0].score ? '↑' : '↓')
+    : '—';
+
+  document.getElementById('mk-avg').textContent = avg;
+  document.getElementById('mk-best').textContent = best;
+  document.getElementById('mk-trend').textContent = trendDir;
+  document.getElementById('ov-best').textContent = best;
+
+  const color = s => s >= 220 ? 'var(--mint)' : s >= 160 ? 'var(--amber)' : 'var(--rose)';
+  document.getElementById('mock-list').innerHTML = mocks.map((m, i) => `
     <div class="mock-item">
       <div class="mock-num">M${i+1}</div>
-      <div class="mock-score-val" style="color:${colors(m.score)}">${m.score}</div>
+      <div class="mock-score-val" style="color:${color(m.score)}">${m.score}</div>
       <div class="mock-bar-track"><div class="mock-bar-fill" style="width:${Math.round(m.score/300*100)}%"></div></div>
-      <div class="mock-label-text">${m.label||''}</div>
-      <div class="mock-delete" onclick="deleteMock(${i})">✕</div>
+      <div class="mock-label-text" style="font-size:10px;color:var(--muted)">${m.label || ''}</div>
+      <button class="mock-delete" onclick="deleteMock(${i})">✕</button>
     </div>`).join('');
 }
 
-function addMock(){
-  const score=parseInt(document.getElementById('new-score').value);
-  const label=document.getElementById('new-label').value.trim();
-  if(isNaN(score)||score<0||score>300){alert('Enter a valid score (0–300)');return;}
-  const mocks=K('mocks')||[];
-  mocks.push({score,label});
-  W('mocks',mocks);
-  document.getElementById('new-score').value='';
-  document.getElementById('new-label').value='';
+function addMock() {
+  const score = parseInt(document.getElementById('new-score').value);
+  const label = document.getElementById('new-label').value.trim();
+  if (isNaN(score) || score < 0 || score > 300) { showToast('Enter a valid score (0–300)', '⚠'); return; }
+  const mocks = K('mocks') || [];
+  mocks.push({ score, label, date: dateKey() });
+  W('mocks', mocks);
+  document.getElementById('new-score').value = '';
+  document.getElementById('new-label').value = '';
   renderMockList();
   renderMockChart();
   renderOverview();
+  showToast(`Mock score ${score}/300 logged!`, '📊');
 }
 
-function deleteMock(i){
-  if(!confirm('Delete this mock entry?'))return;
-  const mocks=K('mocks')||[];
-  mocks.splice(i,1);
-  W('mocks',mocks);
+function deleteMock(i) {
+  const mocks = K('mocks') || [];
+  mocks.splice(i, 1);
+  W('mocks', mocks);
   renderMockList();
   renderMockChart();
   renderOverview();
+  showToast('Mock entry deleted.', '✕');
 }
 
+// ─── POMODORO ──────────────────────────────────────────────────────────────
+let pomoState = {
+  running: false,
+  isBreak: false,
+  timeLeft: 25 * 60,
+  totalTime: 25 * 60,
+  breakTime: 5 * 60,
+  completedToday: 0,
+  subject: 'phy',
+  presetName: 'Classic',
+  interval: null
+};
+
+function initPomo() {
+  pomoState.completedToday = K('pomo_today_count') || 0;
+  const todayKey = dateKey();
+  const savedKey = K('pomo_date');
+  if (savedKey !== todayKey) {
+    pomoState.completedToday = 0;
+    W('pomo_today_count', 0);
+    W('pomo_date', todayKey);
+  }
+  renderPomoDots();
+  renderPomoLog();
+}
+
+function setPomoPreset(work, brk, name, el) {
+  if (pomoState.running) return;
+  pomoState.totalTime = work * 60;
+  pomoState.breakTime = brk * 60;
+  pomoState.timeLeft = work * 60;
+  pomoState.isBreak = false;
+  pomoState.presetName = name;
+  document.querySelectorAll('.pomo-preset').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('pomo-mode').textContent = 'focus';
+  renderPomoDisplay();
+}
+
+function setPomoSubject(s) {
+  pomoState.subject = s;
+  const names = {phy:'⚡ Physics', che:'🧪 Chemistry', mat:'∑ Maths'};
+  document.getElementById('pomo-subj-label').textContent = names[s];
+  document.getElementById('focus-subject-label').textContent = names[s];
+  ['phy','che','mat'].forEach(x => {
+    const el = document.getElementById('pomo-sel-' + x);
+    if (el) el.style.borderColor = x === s ? 'var(--border4)' : 'var(--border)';
+  });
+}
+
+function renderPomoDisplay() {
+  const m = Math.floor(pomoState.timeLeft / 60);
+  const s = pomoState.timeLeft % 60;
+  const str = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  document.getElementById('pomo-time').textContent = str;
+  document.getElementById('focus-time-display').textContent = str;
+
+  const total = pomoState.isBreak ? pomoState.breakTime : pomoState.totalTime;
+  const ratio = pomoState.timeLeft / total;
+  const circumference = 565;
+  const dashOffset = circumference * ratio;
+  const ring = document.getElementById('pomo-ring-fill');
+  ring.style.strokeDashoffset = dashOffset;
+  ring.style.stroke = pomoState.isBreak ? 'var(--mint)' : 'var(--accent2)';
+
+  document.getElementById('pomo-mode').textContent = pomoState.isBreak ? 'break' : 'focus';
+  document.getElementById('pomo-start-btn').textContent = pomoState.running ? 'Pause' : 'Start';
+}
+
+function togglePomo() {
+  if (pomoState.running) {
+    clearInterval(pomoState.interval);
+    pomoState.running = false;
+  } else {
+    pomoState.running = true;
+    pomoState.interval = setInterval(() => {
+      pomoState.timeLeft--;
+      renderPomoDisplay();
+      if (pomoState.timeLeft <= 0) {
+        clearInterval(pomoState.interval);
+        pomoState.running = false;
+        if (!pomoState.isBreak) {
+          pomoState.completedToday++;
+          W('pomo_today_count', pomoState.completedToday);
+          const logs = K('pomo_log_' + dateKey()) || [];
+          logs.push({ time: new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'}), subject: pomoState.subject, mins: pomoState.totalTime/60 });
+          W('pomo_log_' + dateKey(), logs);
+          renderPomoDots();
+          renderPomoLog();
+          showToast(`🍅 Focus session complete! Break time.`, '✓', 5000);
+          pomoState.isBreak = true;
+          pomoState.timeLeft = pomoState.breakTime;
+        } else {
+          pomoState.isBreak = false;
+          pomoState.timeLeft = pomoState.totalTime;
+          showToast('Break over! Time to focus again.', '⚡', 4000);
+        }
+        renderPomoDisplay();
+      }
+    }, 1000);
+  }
+  renderPomoDisplay();
+}
+
+function resetPomo() {
+  clearInterval(pomoState.interval);
+  pomoState.running = false;
+  pomoState.isBreak = false;
+  pomoState.timeLeft = pomoState.totalTime;
+  renderPomoDisplay();
+}
+
+function skipPomo() {
+  clearInterval(pomoState.interval);
+  pomoState.running = false;
+  if (!pomoState.isBreak) {
+    pomoState.isBreak = true;
+    pomoState.timeLeft = pomoState.breakTime;
+    document.getElementById('pomo-mode').textContent = 'break';
+  } else {
+    pomoState.isBreak = false;
+    pomoState.timeLeft = pomoState.totalTime;
+    document.getElementById('pomo-mode').textContent = 'focus';
+  }
+  renderPomoDisplay();
+}
+
+function renderPomoDots() {
+  const count = pomoState.completedToday;
+  let html = '';
+  for (let i = 0; i < 8; i++) {
+    html += `<div class="pomo-dot${i < count ? ' done' : ''}"></div>`;
+  }
+  document.getElementById('pomo-dots').innerHTML = html;
+}
+
+function renderPomoLog() {
+  const logs = K('pomo_log_' + dateKey()) || [];
+  const el = document.getElementById('pomo-log');
+  if (!logs.length) { el.textContent = 'No sessions yet today.'; return; }
+  const names = {phy:'Physics', che:'Chemistry', mat:'Maths'};
+  el.innerHTML = logs.map(l => `<div style="padding:6px 0;border-bottom:1px solid var(--border);color:var(--muted2)"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);min-width:50px;display:inline-block">${l.time}</span> ${l.mins}m · ${names[l.subject] || l.subject}</div>`).join('');
+}
+
+function openFocus() {
+  document.getElementById('focus-overlay').classList.add('active');
+}
+function closeFocus() {
+  document.getElementById('focus-overlay').classList.remove('active');
+}
+
+// ─── ANALYTICS ─────────────────────────────────────────────────────────────
+let trendChartInst = null, pieChartInst = null;
+function renderAnalytics() {
+  const sessions = K('sessions') || [];
+  const total = sessions.reduce((a, s) => a + s.total, 0);
+  const days = new Set(sessions.map(s => s.key)).size;
+  const avg = days ? (total / days).toFixed(1) : 0;
+  const best = sessions.length ? Math.max(...sessions.map(s => s.total)) : 0;
+
+  document.getElementById('an-total').textContent = total.toFixed(0) + 'h';
+  document.getElementById('an-days').textContent = days;
+  document.getElementById('an-avg').textContent = avg + 'h';
+  document.getElementById('an-best').textContent = best + 'h';
+
+  // Insights
+  const totalPhy = sessions.reduce((a, s) => a + s.phy, 0);
+  const totalChe = sessions.reduce((a, s) => a + s.che, 0);
+  const totalMat = sessions.reduce((a, s) => a + s.mat, 0);
+  const weakest = totalPhy <= totalChe && totalPhy <= totalMat ? 'Physics' : totalChe <= totalPhy && totalChe <= totalMat ? 'Chemistry' : 'Maths';
+  const strongest = totalPhy >= totalChe && totalPhy >= totalMat ? 'Physics' : totalChe >= totalPhy && totalChe >= totalMat ? 'Chemistry' : 'Maths';
+  const streak = calcStreak();
+  const mocks = K('mocks') || [];
+  const mockAvg = mocks.length ? Math.round(mocks.reduce((a, m) => a + m.score, 0) / mocks.length) : 0;
+
+  const insights = [
+    { icon: '⚡', title: 'Strongest Subject', body: `You've spent the most time on ${strongest}. Keep the momentum going there.` },
+    { icon: '🎯', title: 'Needs Attention', body: `${weakest} has gotten the least hours. Prioritize it this week.` },
+    { icon: '🔥', title: 'Current Streak', body: streak >= 7 ? `${streak} days straight! You're in a serious rhythm. Don't break it.` : streak > 0 ? `${streak} day streak. Good. Now make it 7.` : `No active streak. Get on the board today.` },
+    { icon: '📊', title: 'Mock Test Score', body: mocks.length ? `Average score: ${mockAvg}/300. ${mockAvg >= 200 ? 'Solid! Push for 250+.' : mockAvg >= 150 ? 'Getting there. Focus on weak areas.' : 'Below target. More mock practice needed.'}` : 'No mocks logged yet. Start taking full tests.' },
+  ];
+
+  document.getElementById('insights-grid').innerHTML = insights.map(i => `
+    <div class="insight-card">
+      <div class="insight-icon">${i.icon}</div>
+      <div><div class="insight-title">${i.title}</div><div class="insight-body">${i.body}</div></div>
+    </div>`).join('');
+
+  // 30-day trend
+  const ctx1 = document.getElementById('trend-chart');
+  if (trendChartInst) trendChartInst.destroy();
+  const today = new Date();
+  const last30 = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(today); d.setDate(today.getDate() - i);
+    const key = dateKey(d);
+    const s = sessions.find(x => x.key === key);
+    last30.push({ label: d.getDate() + '/' + (d.getMonth()+1), hrs: s ? s.total : 0 });
+  }
+  trendChartInst = new Chart(ctx1, {
+    type: 'bar',
+    data: {
+      labels: last30.map(d => d.label),
+      datasets: [{
+        data: last30.map(d => d.hrs),
+        backgroundColor: last30.map(d => d.hrs >= 4 ? 'rgba(16,217,160,0.7)' : d.hrs >= 2 ? 'rgba(167,139,250,0.6)' : d.hrs > 0 ? 'rgba(245,158,11,0.5)' : 'rgba(255,255,255,0.05)'),
+        borderRadius: 3, borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.parsed.y + 'h' } } },
+      scales: {
+        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#6b6890', font: { size: 9 } }, border: { color: 'transparent' } },
+        x: { grid: { display: false }, ticks: { color: '#6b6890', font: { size: 8 }, maxTicksLimit: 10 }, border: { color: 'transparent' } }
+      }
+    }
+  });
+
+  // Pie chart
+  const ctx2 = document.getElementById('pie-chart');
+  if (pieChartInst) pieChartInst.destroy();
+  if (totalPhy + totalChe + totalMat > 0) {
+    pieChartInst = new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: ['Physics', 'Chemistry', 'Maths'],
+        datasets: [{ data: [totalPhy, totalChe, totalMat], backgroundColor: ['#a78bfa','#f43f5e','#10d9a0'], borderColor: '#07071a', borderWidth: 3 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { color: '#9994b8', font: { size: 10, family: 'JetBrains Mono' }, boxWidth: 10, padding: 10 } },
+          tooltip: { backgroundColor: 'rgba(13,13,36,0.95)', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1 }
+        },
+        cutout: '65%'
+      }
+    });
+  }
+
+  // Monthly summary
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const monthlySummary = {};
+  sessions.forEach(s => {
+    const parts = s.key.split('-');
+    const monthKey = parts[0] + '-' + parts[1];
+    monthlySummary[monthKey] = (monthlySummary[monthKey] || 0) + s.total;
+  });
+  const summaryEl = document.getElementById('monthly-summary');
+  const entries = Object.entries(monthlySummary).sort();
+  if (!entries.length) { summaryEl.innerHTML = '<div style="color:var(--muted);font-size:12px;padding:12px 0">No data yet.</div>'; return; }
+  summaryEl.innerHTML = entries.map(([k, h]) => {
+    const [y, m] = k.split('-');
+    const pct = Math.min(100, Math.round(h / (35*4) * 100));
+    return `<div class="subj-row">
+      <div class="subj-name" style="min-width:80px;font-size:11px">${months[parseInt(m)-1]} ${y}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:linear-gradient(90deg,var(--accent2),var(--mint))"></div></div>
+      <div class="bar-pct">${h.toFixed(0)}h</div>
+    </div>`;
+  }).join('');
+}
+
+// ─── EXPORT / IMPORT ───────────────────────────────────────────────────────
+function exportData() {
+  const data = {
+    sessions: K('sessions'),
+    mocks: K('mocks'),
+    topics_phy: K('topics_phy'),
+    topics_che: K('topics_che'),
+    topics_mat: K('topics_mat'),
+    exportDate: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `jee-backup-${dateKey()}.json`;
+  a.click();
+  showToast('Backup exported! Keep it safe.', '↓');
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.sessions) W('sessions', data.sessions);
+      if (data.mocks) W('mocks', data.mocks);
+      if (data.topics_phy) W('topics_phy', data.topics_phy);
+      if (data.topics_che) W('topics_che', data.topics_che);
+      if (data.topics_mat) W('topics_mat', data.topics_mat);
+      renderOverview(); renderSessions(); renderSyllabus(); renderCalendar(); renderMockList();
+      showToast('Data imported successfully!', '↑');
+    } catch(err) {
+      showToast('Invalid backup file.', '⚠');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function clearAll() {
+  ['sessions','mocks','topics_phy','topics_che','topics_mat'].forEach(k => localStorage.removeItem('jee2027_' + k));
+  renderOverview(); renderSessions(); renderSyllabus(); renderCalendar(); renderMockList();
+  showToast('All data cleared.', '⚠');
+}
+
+// ─── KEYBOARD SHORTCUTS ────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (e.key === ' ' && document.getElementById('page-pomodoro').classList.contains('active')) {
+    e.preventDefault(); togglePomo();
+  }
+  if (e.key === 'Escape') closeFocus();
+  if (e.key === '1') goTo('overview');
+  if (e.key === '2') goTo('log');
+  if (e.key === '3') goTo('pomodoro');
+  if (e.key === '4') goTo('calendar');
+  if (e.key === '5') goTo('syllabus');
+  if (e.key === '6') goTo('mocks');
+  if (e.key === '7') goTo('analytics');
+});
+
+// ─── START ─────────────────────────────────────────────────────────────────
 init();
+setPomoSubject('phy');
+renderPomoDisplay();
 </script>
 </body>
 </html>
